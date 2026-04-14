@@ -220,13 +220,13 @@ Il meccanismo di attesa e segnalazione permette di coordinare l'esecuzione di du
         \node[right=0.1cm of (5,-3), font=\tiny] {Performing Task};
         
         % Signals
-        \draw[arrow, red, dashed] (0,-1.5) -- node[above, font=\tiny, color=black] {pthread_cond_wait()} (5,-1.5);
-        \draw[arrow, red, very thick] (5,-4.5) -- node[above, font=\tiny, color=black] {pthread_cond_signal()} (0,-4.5);
+        \draw[arrow, red, dashed] (0,-1.5) -- node[above, font=\tiny, color=black] {pthread\_cond\_wait()} (5,-1.5);
+        \draw[arrow, red, very thick] (5,-4.5) -- node[above, font=\tiny, color=black] {pthread\_cond\_signal()} (0,-4.5);
 
-        \node[msg] at (2.5, -5.5) {child_done = 1};
+        \node[msg] at (2.5, -5.5) {child\_done = 1};
     \end{tikzpicture}
     \caption{Diagramma di sequenza della sincronizzazione tramite Condition Variables (Wait/Signal).}
-    \label{fig:cond\_var\_seq}
+    \label{fig:cond_var_seq}
 \end{figure}
 
 Questa tipologia di codice mima al 100\% la gestione in background dello scheduler per attendere flussi operativi prima di uscire in un \texttt{return 0;}.
