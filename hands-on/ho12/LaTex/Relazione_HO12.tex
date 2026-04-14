@@ -213,6 +213,14 @@ sem_post(&mutex);        // Esce
 sem_post(&empty_slots);  // Converte il "pieno" appena letto in "vuoto"
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
 \section{Risultati}
 L'esecuzione del codice ha fornito log testuali perfetti di dimostrazione del comportamento atteso.
 

@@ -205,6 +205,13 @@ pthread_join(tC, (void**)&resC);
 // Ora posso lanciare il task D (Livello 1)
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+Compilazione del risolutore di grafi:
+\begin{terminal}[Build]
+$ gcc graph_solver.c -o solver
+\end{terminal}
+
 \section{Risultati}
 La validazione è stata condotta verificando l'integrità del calcolo e l'ordine di esecuzione dei thread.
 

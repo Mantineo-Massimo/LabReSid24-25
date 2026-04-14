@@ -206,6 +206,16 @@ bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr));
 recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr *)&cliaddr, &len);
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+Per testare la comunicazione TCP e UDP, compilare i sorgenti con GCC:
+\begin{terminal}[Build]
+$ gcc server_tcp.c -o s_tcp
+$ gcc client_tcp.c -o c_tcp
+$ gcc server_udp.c -o s_udp
+$ gcc client_udp.c -o c_udp
+\end{terminal}
+
 \section{Risultati}
 La validazione del sistema è stata condotta su due fronti: l'analisi interna delle risorse di sistema e l'ispezione esterna del traffico.
 

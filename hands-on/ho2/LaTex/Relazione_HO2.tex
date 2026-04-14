@@ -210,6 +210,15 @@ activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 \end{ccode}
 Questa architettura permette di mantenere stati di validazione indipendenti per ogni client tramite una struttura \texttt{client_state}.
 
+
+\subsection{Istruzioni di Esecuzione}
+La compilazione dei modelli bloccanti e non-bloccanti avviene tramite GCC:
+\begin{terminal}[GCC Build]
+$ gcc server_tcp_block.c -o s_block
+$ gcc server_tcp_nonblock.c -o s_nonblock
+$ gcc client_tcp.c -o client
+\end{terminal}
+
 \section{Risultati}
 La validazione è stata condotta simulando accessi concorrenti e ispezionando l'interlacciamento dei pacchetti.
 

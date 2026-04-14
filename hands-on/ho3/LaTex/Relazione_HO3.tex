@@ -208,6 +208,14 @@ Dopo che la \texttt{select()} ritorna, il server distingue due rami logici:
     \item \textbf{I/O Applicativo}: Se \texttt{FD_ISSET(sd)}, viene eseguita la \texttt{read()}. Se la lunghezza è 0, il client ha chiuso la socket; altrimenti, il messaggio viene processato.
 \end{enumerate}
 
+
+\subsection{Istruzioni di Esecuzione}
+Compilazione del server multiplexing e del client di test:
+\begin{terminal}[Compilation]
+$ gcc server_multiplex.c -o server
+$ gcc client_test.c -o client
+\end{terminal}
+
 \section{Risultati}
 La validazione è stata effettuata tramite uno script bash che lancia 5 client in background, verificando la corretta ricezione degli ACK sincronizzati.
 

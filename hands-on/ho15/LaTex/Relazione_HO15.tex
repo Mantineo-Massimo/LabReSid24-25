@@ -214,6 +214,14 @@ void stf(int id, int* state, int sender, const char* info) {
 }
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
 \section{Risultati}
 Avviando la Routine, la stampa al terminale esalta coerentemente la logica asincrona dei 4 nodi isolati e del Flooding, in cui i Nodi 2 e 3 alla fine scartano i messaggi ritardatari pervenuto dell'altro braccio.
 

@@ -205,6 +205,14 @@ Le 60.000 immagini del set di training di MNIST sono state suddivise in modo cas
     \item \textbf{FederatedAggregator}: Coordina i round di comunicazione, esegue l'aggregazione FedAvg e valuta il modello globale su un set di test centrale (10.000 immagini).
 \end{itemize}
 
+
+\subsection{Istruzioni di Esecuzione}
+L'addestramento federato viene gestito tramite Makefile:
+\begin{terminal}[Run]
+$ make install # Setup ambiente
+$ make run     # Avvio training federato
+\end{terminal}
+
 \section{Risultati}
 Il sistema è stato testato per 3 round di comunicazione. I log mostrano un rapido incremento dell'accuratezza globale:
 

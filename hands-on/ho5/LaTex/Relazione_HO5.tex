@@ -210,6 +210,14 @@ struct iphdr *ip_hdr = (struct iphdr *)recv_buffer;
 struct icmphdr *icmp_reply = (struct icmphdr *)(recv_buffer + (ip_hdr->ihl * 4));
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+L'uso dei raw socket richiede privilegi elevati (sudo):
+\begin{terminal}[Build & Run]
+$ gcc ICMP_raw.c -o icmp_ping
+$ sudo ./icmp_ping 8.8.8.8
+\end{terminal}
+
 \section{Risultati}
 La validazione è stata condotta interrogando il server DNS di Google (\texttt{8.8.8.8}) con privilegi di \texttt{root}.
 

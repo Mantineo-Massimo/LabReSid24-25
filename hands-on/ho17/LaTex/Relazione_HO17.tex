@@ -203,6 +203,14 @@ int cost_matrix[NUM_NODES][NUM_NODES] = {
 \end{ccode}
 Abbiamo programmato volontariamente un trabocchetto: benché esista l'arco diretto Nodo 2 $\rightarrow$ Target 0 al costo di asticella `5`, la somma dei pesi passando attivamente per Nodo 1 costa solamente `3` ($1+2$). Costringiamo così in maniera fittizia l'algoritmo a ricalcolare le metriche ignorando l'arco apparentemente più palese (Il nodo 3 dista `1` dal 2, per un totale di `4`, ed in quanto esso dista `4` dal Nodo 1 che aggiunge il fatidico `2`, la via più ovvia peserebbe `6`. Viene scelto `4`).
 
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
 \section{Risultati}
 Si è provveduto allo sfoggio del binario, compilato per iterazioni continue ed abortito dopo $3_{sec}$ dall'incessazione delle scoperte IPC (Timeout Convergenza).
 

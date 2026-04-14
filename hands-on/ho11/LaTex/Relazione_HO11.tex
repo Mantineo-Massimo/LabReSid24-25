@@ -222,6 +222,14 @@ sem_post(&max_concurrency_sem); // Ritiro e rilascio
 \end{ccode}
 Il cui setup del semaforo poggia sulla chiamata \texttt{sem\_init(\&max\_concurrency\_sem, 0, 2);}.
 
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
 \section{Risultati}
 L'esecuzione della pipeline ha restituito un comportamento pienamente conforme all'osservazione teorica.
 

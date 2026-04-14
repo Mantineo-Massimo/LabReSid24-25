@@ -200,6 +200,14 @@ h1.setDefaultRoute('via 10.0.1.254')
 \subsection{Emulazione Vincoli Fisici}
 È stata applicata la classe \texttt{TCLink} per simulare un link a \textbf{100 Mbps} con un ritardo di \textbf{75ms} per ogni tratta, portando l'RTT complessivo tra host distanti a circa 300ms.
 
+
+\subsection{Istruzioni di Esecuzione}
+Le topologie Mininet devono essere avviate come root:
+\begin{terminal}[Mininet Run]
+$ sudo python3 ex2_router.py
+$ sudo python3 ex3_tc.py
+\end{terminal}
+
 \section{Risultati}
 La validazione è stata effettuata tramite tool di misura (\texttt{ping}, \texttt{iperf}) e analisi dei protocolli.
 

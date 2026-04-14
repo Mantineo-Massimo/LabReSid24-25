@@ -197,6 +197,13 @@ pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
 \subsection{Algoritmo di Verifica}
 Viene utilizzato un algoritmo di test di primalità ottimizzato (fino alla radice quadrata di $N$) per ridurre la complessità computazionale di ogni singolo thread.
 
+
+\subsection{Istruzioni di Esecuzione}
+Compilazione con supporto ai thread (pthread):
+\begin{terminal}[Build]
+$ gcc prime_affinity.c -o affinity -pthread
+\end{terminal}
+
 \section{Risultati}
 La validazione è stata condotta monitorando la distribuzione del carico in tempo reale.
 

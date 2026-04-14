@@ -235,6 +235,14 @@ while (1) {
 setsockopt(sockfd, IPPROTO_IP, IP_DROP_MEMBERSHIP, &multicast_req, sizeof(multicast_req));
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+Compilazione della suite multicast:
+\begin{terminal}[Multicast Build]
+$ gcc multicast_server.c -o server
+$ gcc multicast_client.c -o client
+\end{terminal}
+
 \section{Risultati}
 Per validare il comportamento del software, sono stati testati esecutivamente due processi client separati ed un unico mittente (il server multicast) sulla medesima subnet.
 

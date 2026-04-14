@@ -203,6 +203,14 @@ main: main.o symbols.o
     size $@ # Verifica segmenti memoria
 \end{ccode}
 
+
+\subsection{Istruzioni di Esecuzione}
+L'Hands-On utilizza un Makefile per gestire la tabella dei simboli:
+\begin{terminal}[Makefile]
+$ make all
+$ ./programma
+\end{terminal}
+
 \section{Risultati}
 La validazione ha confermato la corretta risoluzione dei simboli esterni durante la fase di linking.
 

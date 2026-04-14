@@ -206,6 +206,14 @@ client_sock = accept(server_sock, ...);
 \end{ccode}
 Ogniqualvolta una richiesta accede al DB, acquisisce un \texttt{pthread\_mutex\_lock(\&db\_lock)}. Se è un inserzione (\texttt{ADD}), scansiona i duplicati di ID per prevenire collisioni logiche. Lo stream testuale inviato dai socket viene parsate comodamente tramite \texttt{sscanf}.
 
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
 \section{Risultati}
 Innescando il demone server ed aprendo il client tramite l'eseguibile \texttt{./client}, la suite risponde correttamente con l'estratto CRUD implementato:
 \begin{terminal}[Esecuzione Client e Server RPC]
