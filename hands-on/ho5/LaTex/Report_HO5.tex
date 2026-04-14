@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -182,7 +182,7 @@ L'obiettivo della quinta esercitazione (Hands-On 5) è lo studio e l'implementaz
 Il protocollo ICMP (RFC 792) è lo strumento fondamentale per la diagnostica e il controllo degli errori nelle reti IP.
 \begin{itemize}
     \item \textbf{Struttura del Messaggio}: Un pacchetto ICMP è composto da un header di 8 byte (Tipo, Codice, Checksum, Identificatore e Numero di Sequenza) seguito da un payload opzionale.
-    \item \textbf{Socket Raw (\texttt{SOCK_RAW})}: A differenza dei socket tradizionali, i socket raw permettono l'accesso diretto ai protocolli del livello di rete. L'uso di \texttt{IPPROTO_ICMP} istruisce il kernel a non aggiungere header di trasporto, delegando all'applicazione la costruzione del pacchetto. Per ragioni di sicurezza, queste operazioni richiedono privilegi di amministrazione (\texttt{root/sudo}).
+    \item \textbf{Socket Raw (\texttt{SOCK\_RAW})}: A differenza dei socket tradizionali, i socket raw permettono l'accesso diretto ai protocolli del livello di rete. L'uso di \texttt{IPPROTO\_ICMP} istruisce il kernel a non aggiungere header di trasporto, delegando all'applicazione la costruzione del pacchetto. Per ragioni di sicurezza, queste operazioni richiedono privilegi di amministrazione (\texttt{root/sudo}).
     \item \textbf{Endianness}: Poiché i campi dell'header (come l'Identifier) sono multi-byte, è essenziale gestire la conversione tra l'ordine dei byte dell'host (Little-Endian su x86) e quello della rete (Big-Endian) tramite \texttt{htons()} e \texttt{ntohs()}.
 \end{itemize}
 
@@ -192,7 +192,7 @@ L'implementazione si articola nella costruzione del pacchetto e nell'analisi del
 \subsection{Costruzione del Pacchetto Echo Request}
 Viene allocato un buffer in cui si mappano le strutture \texttt{struct icmphdr}. Il checksum deve essere calcolato sull'intero header ICMP e sul payload prima dell'invio.
 \begin{ccode}[Snippet Calcolo Checksum ICMP]
-unsigned short compute_checksum(void *addr, int len) {
+unsigned short compute\_checksum(void *addr, int len) {
     int sum = 0; unsigned short *ptr = addr;
     while (len > 1) { sum += *ptr++; len -= 2; }
     if (len == 1) sum += *(unsigned char *)ptr;
@@ -205,17 +205,17 @@ unsigned short compute_checksum(void *addr, int len) {
 \subsection{Ricezione e Parsing IP}
 Al momento della ricezione, il kernel restituisce anche l'header IP (20 byte). È necessario estrarre la lunghezza dell'header IP (\texttt{ihl}) per individuare l'inizio del payload ICMP:
 \begin{ccode}[Snippet Parsing Risposta]
-struct iphdr *ip_hdr = (struct iphdr *)recv_buffer;
+struct iphdr *ip\_hdr = (struct iphdr *)recv\_buffer;
 // L'header ICMP inizia dopo (IHL * 4) byte
-struct icmphdr *icmp_reply = (struct icmphdr *)(recv_buffer + (ip_hdr->ihl * 4));
+struct icmphdr *icmp\_reply = (struct icmphdr *)(recv\_buffer + (ip\_hdr->ihl * 4));
 \end{ccode}
 
 
 \subsection{Istruzioni di Esecuzione}
 L'uso dei raw socket richiede privilegi elevati (sudo):
 \begin{terminal}[Build & Run]
-$ gcc ICMP_raw.c -o icmp_ping
-$ sudo ./icmp_ping 8.8.8.8
+$ gcc ICMP\_raw.c -o icmp\_ping
+$ sudo ./icmp\_ping 8.8.8.8
 \end{terminal}
 
 \section{Risultati}
@@ -223,15 +223,15 @@ La validazione è stata condotta interrogando il server DNS di Google (\texttt{8
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{ho5/ho5_icmp_request.png}
+    \includegraphics[width=0.9\textwidth]{ho5\_icmp\_request.png}
     \caption{Cattura pacchetti ICMP su Wireshark.}
-    \label{fig:icmp_capture}
+    \label{fig:icmp\_capture}
 \end{figure}
 
 \subsection{Test di Raggiungibilità}
 Il programma ha riportato con successo la ricezione dell'Echo Reply (Tipo 0), confermando il corretto matching tra l'ID del processo e l'ID contenuto nel pacchetto di ritorno.
 \begin{terminal}[Output Ping Custom]
-$ sudo ./icmp_ping 8.8.8.8
+$ sudo ./icmp\_ping 8.8.8.8
 Invio ICMP Echo Request (id=1234, seq=1)...
 Ricevuta risposta: seq=1, TTL=117, bytes=64
 \end{terminal}

@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage{listings}
@@ -204,7 +204,7 @@ Il paradigma SDN rivoluziona le reti tradizionali separando il piano di controll
         \node[below=0.2cm of data, font=\itshape\small] {Virtual Topology (Linux Namespaces)};
     \end{tikzpicture}
     \caption{Architettura SDN: Separazione tra logica di controllo centrallizzata e piano dati virtualizzato.}
-    \label{fig:sdn_architecture}
+    \label{fig:sdn\_architecture}
 \end{figure}
 
 \begin{itemize}
@@ -225,10 +225,10 @@ h2# nc 10.0.0.1 5432 "Hello Mininet"
 \end{terminal}
 
 \subsection{Routing L3 Personalizzato}
-Tramite l'API Python di Mininet, è stato implementato un \texttt{GenericRouter}. Il nodo router abilita l'instradamento globale tramite il flag del kernel \texttt{ip_forward}:
+Tramite l'API Python di Mininet, è stato implementato un \texttt{GenericRouter}. Il nodo router abilita l'instradamento globale tramite il flag del kernel \texttt{ip\_forward}:
 \begin{pythoncode}[Snippet Implementazione Router]
 # Abilitazione forwarding su nodo router 'r0'
-r0.cmd('sysctl net.ipv4.ip_forward=1')
+r0.cmd('sysctl net.ipv4.ip\_forward=1')
 # Configurazione gateway predefinito sugli host
 h1.setDefaultRoute('via 10.0.1.254')
 \end{pythoncode}
@@ -240,8 +240,8 @@ h1.setDefaultRoute('via 10.0.1.254')
 \subsection{Istruzioni di Esecuzione}
 Le topologie Mininet devono essere avviate come root:
 \begin{terminal}[Mininet Run]
-$ sudo python3 ex2_router.py
-$ sudo python3 ex3_tc.py
+$ sudo python3 ex2\_router.py
+$ sudo python3 ex3\_tc.py
 \end{terminal}
 
 \section{Risultati}
@@ -249,16 +249,16 @@ La validazione è stata effettuata tramite tool di misura (\texttt{ping}, \textt
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{ho7/ho7_wireshark_ex2.png}
+    \includegraphics[width=0.8\textwidth]{ho7_wireshark\_ex2.png}
     \caption{Analisi traffico SDN in topologia router-based (Esercizio 2).}
-    \label{fig:sdn_router}
+    \label{fig:sdn\_router}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{ho7/ho7_wireshark_ex3.png}
+    \includegraphics[width=0.8\textwidth]{ho7_wireshark\_ex3.png}
     \caption{Verifica ritardi e banda con TC su link virtuale (Esercizio 3).}
-    \label{fig:sdn_links}
+    \label{fig:sdn\_links}
 \end{figure}
 
 \subsection{Analisi Wireshark}
@@ -268,8 +268,8 @@ L'ispezione della cattura (Figura 7) evidenzia graficamente l'impatto dei vincol
 La verifica dei vincoli fisici è stata effettuata tramite le utility \texttt{ping} e \texttt{iperf} integrate nella CLI di Mininet.
 \begin{terminal}[Test di Connettività e Banda]
 mininet> h1 ping -c 3 h2
-64 bytes from 10.0.2.1: icmp_seq=1 ttl=63 time=300 ms
-64 bytes from 10.0.2.1: icmp_seq=2 ttl=63 time=300 ms
+64 bytes from 10.0.2.1: icmp\_seq=1 ttl=63 time=300 ms
+64 bytes from 10.0.2.1: icmp\_seq=2 ttl=63 time=300 ms
 
 mininet> iperf h1 h2
 *** Iperf: testing TCP bandwidth between h1 and h2 

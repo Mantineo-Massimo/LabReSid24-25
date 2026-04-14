@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage{listings}
@@ -177,7 +177,7 @@
 \newpage
 
 \section{Problem Statement}
-L'ottavo Hands-On (HO4) si focalizza sullo sviluppo di un server TCP ad alte prestazioni su piattaforma Linux. L'obiettivo primario è migrare dal modello di multiplexing tradizionale (\texttt{select}) alla moderna interfaccia \textbf{\texttt{epoll}}. Il sistema deve essere in grado di gestire simultaneamente fino a 10 connessioni client, garantendo l'integrità dei messaggi ricevuti e fornendo un feedback immediato (\texttt{ACK_EPOLL_OK}). La sfida tecnica consiste nell'ottimizzare l'uso delle risorse di sistema riducendo l'overhead di scansione dei descrittori tipico delle soluzioni legacy.
+L'ottavo Hands-On (HO4) si focalizza sullo sviluppo di un server TCP ad alte prestazioni su piattaforma Linux. L'obiettivo primario è migrare dal modello di multiplexing tradizionale (\texttt{select}) alla moderna interfaccia \textbf{\texttt{epoll}}. Il sistema deve essere in grado di gestire simultaneamente fino a 10 connessioni client, garantendo l'integrità dei messaggi ricevuti e fornendo un feedback immediato (\texttt{ACK\_EPOLL\_OK}). La sfida tecnica consiste nell'ottimizzare l'uso delle risorse di sistema riducendo l'overhead di scansione dei descrittori tipico delle soluzioni legacy.
 
 \section{Stato dell'Arte}
 Il kernel Linux ha introdotto \texttt{epoll} (Event Poll) per superare i limiti di scalabilità della \texttt{select()} e della \texttt{poll()}.
@@ -210,14 +210,14 @@ L'implementazione sfrutta le tre primitive cardine dell'API epoll per gestire il
         \node[fd] (fd1) at (-2.5,0.5) {fd 3};
         \node[fd] (fd2) at (-1.5,-0.5) {fd 5};
         \node[fd] (fd3) at (-0.5,0.5) {fd 6};
-        \node[fd, fill=yellow!30] (fd_act) at (1.5,0) {fd 8};
-        \node[right=0.1cm of fd_act, font=\tiny, color=red] {EVENT!};
+        \node[fd, fill=yellow!30] (fd\_act) at (1.5,0) {fd 8};
+        \node[right=0.1cm of fd\_act, font=\tiny, color=red] {EVENT!};
         
         \node[below=1cm of fd2, font=\itshape\small] {Interest List (RB-Tree)};
 
         % Ready List
         \node[rectangle, draw=green!70, fill=green!5, thick, minimum width=4cm, minimum height=1cm] (ready) at (1.5,-2.5) {Ready List};
-        \draw[arrows={-Stealth}, thick, red] (fd_act) -- (ready);
+        \draw[arrows={-Stealth}, thick, red] (fd\_act) -- (ready);
 
         % User Space
         \node[box, below=1.5cm of ready] (user) {epoll\_wait()};
@@ -226,27 +226,27 @@ L'implementazione sfrutta le tre primitive cardine dell'API epoll per gestire il
         \node[below=0.1cm of user, font=\bfseries\sffamily] {USER SPACE};
     \end{tikzpicture}
     \caption{Architettura di \texttt{epoll}: Gestione della Interest List ad albero e Ready List lineare.}
-    \label{fig:epoll_arch}
+    \label{fig:epoll\_arch}
 \end{figure}
 
 \subsection{Inizializzazione e Registrazione}
 Viene creata un'istanza di epoll e il socket di ascolto viene aggiunto alla lista di interesse:
 \begin{ccode}[Snippet Registrazione epoll]
-epoll_fd = epoll_create1(0);
+epoll\_fd = epoll\_create1(0);
 ev.events = EPOLLIN; // Monitoraggio in lettura
-ev.data.fd = listen_fd;
-epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listen_fd, &ev);
+ev.data.fd = listen\_fd;
+epoll\_ctl(epoll\_fd, EPOLL\_CTL\_ADD, listen\_fd, &ev);
 \end{ccode}
 
 \subsection{Event Loop Asincrono}
-Il server rimane in attesa bloccante su \texttt{epoll_wait}, che restituisce solo i descrittori pronti:
+Il server rimane in attesa bloccante su \texttt{epoll\_wait}, che restituisce solo i descrittori pronti:
 \begin{ccode}[Snippet Loop degli Eventi]
-int nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+int nfds = epoll\_wait(epoll\_fd, events, MAX\_EVENTS, -1);
 for (int n = 0; n < nfds; ++n) {
-    if (events[n].data.fd == listen_fd) {
-        // Accettazione e aggiunta nuovo client con EPOLL_CTL_ADD
+    if (events[n].data.fd == listen\_fd) {
+        // Accettazione e aggiunta nuovo client con EPOLL\_CTL\_ADD
     } else {
-        // Lettura dati e invio ACK_EPOLL_OK
+        // Lettura dati e invio ACK\_EPOLL\_OK
     }
 }
 \end{ccode}
@@ -255,7 +255,7 @@ for (int n = 0; n < nfds; ++n) {
 \subsection{Istruzioni di Esecuzione}
 Compilazione del server basato su epoll:
 \begin{terminal}[Build]
-$ gcc server_epoll.c -o server_epoll
+$ gcc server\_epoll.c -o server\_epoll
 \end{terminal}
 
 \section{Risultati}
@@ -263,21 +263,21 @@ La validazione è stata condotta tramite test di carico sintetico e analisi comp
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{ho4/ho4_wireshark_multi.png}
+    \includegraphics[width=0.9\textwidth]{ho4_wireshark\_multi.png}
     \caption{Cattura epoll multi-client su Wireshark.}
-    \label{fig:wireshark_epoll_multi}
+    \label{fig:wireshark\_epoll\_multi}
 \end{figure}
 
 \subsection{Test di Concorrenza}
 L'esecuzione di 5 client simultanei ha confermato la corretta gestione dei File Descriptor. Il server ha riscontrato latenze minime, visualizzando sui log l'interlacciamento degli ID dei socket (fd:5, fd:6, ecc.) senza mostrare segni di stallo.
 
 \subsection{Analisi Wireshark}
-L'ispezione della cattura (Figura~\ref{fig:wireshark_epoll_multi}) evidenzia che il server \texttt{epoll} risponde istantaneamente a ogni pacchetto \texttt{PSH} ricevuto. La stabilità della connessione è garantita dalla gestione asincrona degli acknowledgment a livello applicativo.
+L'ispezione della cattura (Figura~\ref{fig:wireshark\_epoll\_multi}) evidenzia che il server \texttt{epoll} risponde istantaneamente a ogni pacchetto \texttt{PSH} ricevuto. La stabilità della connessione è garantita dalla gestione asincrona degli acknowledgment a livello applicativo.
 
 \subsection{Benchmark Prestazionali}
 Per valutare l'efficienza di \texttt{epoll} rispetto al modello \texttt{select} (analizzato nell'Hands-On 3), è stato eseguito un test di carico sintetico con 1000 richieste concorrenti.
 \begin{terminal}[Selective vs Epoll Benchmark]
-$ ./benchmark_comparison.sh 1000
+$ ./benchmark\_comparison.sh 1000
 Testing select (HO3)...
 select (HO3) result: 1.42 seconds
 Testing epoll (HO4)...
@@ -292,7 +292,7 @@ L'Hands-On 4 ha dimostrato la superiorità tecnologica di \texttt{epoll} per la 
 
 \noindent \textbf{Sviluppi futuri:}
 \begin{itemize}
-    \item \textbf{io_uring}: Esplorazione del nuovo sottosistema Linux \texttt{io_uring} per eliminare completamente le syscall bloccanti tramite code di completamento asincrone.
+    \item \textbf{io\_uring}: Esplorazione del nuovo sottosistema Linux \texttt{io\_uring} per eliminare completamente le syscall bloccanti tramite code di completamento asincrone.
     \item \textbf{Multi-Core}: Implementazione di un modello \textit{multi-threaded epoll} per distribuire la gestione degli eventi su più core CPU.
 \end{itemize}
 

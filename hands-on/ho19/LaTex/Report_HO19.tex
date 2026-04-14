@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.geometric}
 \usepackage{listings}
@@ -194,9 +194,9 @@ Il Federated Learning si basa sul concetto di portare il calcolo dai dati, invec
         \node[aggregator] (agg) {GLOBAL AGGREGATOR\\(Global Model $W$)};
 
         % Workers
-        \node[worker, below left=2cm and 1cm of agg] (w1) {Worker 1\\(Local Data $D_1$)};
-        \node[worker, below=2.5cm of agg] (w2) {Worker 2\\(Local Data $D_2$)};
-        \node[worker, below right=2cm and 1cm of agg] (w3) {Worker 3\\(Local Data $D_3$)};
+        \node[worker, below left=2cm and 1cm of agg] (w1) {Worker 1\\(Local Data $D\_1$)};
+        \node[worker, below=2.5cm of agg] (w2) {Worker 2\\(Local Data $D\_2$)};
+        \node[worker, below right=2cm and 1cm of agg] (w3) {Worker 3\\(Local Data $D\_3$)};
 
         % Downlink
         \draw[arrow, blue!70] (agg.south) -- node[left, font=\tiny, color=black] {Broadcast Weights} (w1.north);
@@ -204,14 +204,14 @@ Il Federated Learning si basa sul concetto di portare il calcolo dai dati, invec
         \draw[arrow, blue!70] (agg.south) -- node[right, font=\tiny, color=black] {Model Sync} (w3.north);
 
         % Uplink
-        \draw[arrow, green!70!black, dashed] (w1.east) to[bend left=20] node[below, font=\tiny, sloped, color=black] {Local Gradients $\nabla W_1$} (agg.west);
+        \draw[arrow, green!70!black, dashed] (w1.east) to[bend left=20] node[below, font=\tiny, sloped, color=black] {Local Gradients $\nabla W\_1$} (agg.west);
         \draw[arrow, green!70!black, dashed] (w2.north west) to[bend left=10] (agg.south west);
         \draw[arrow, green!70!black, dashed] (w3.west) to[bend right=20] (agg.east);
         
         \node[below=0.5cm of w2, font=\itshape\small] {Decentralized Training (Privacy Preserved)};
     \end{tikzpicture}
     \caption{Ciclo di addestramento nel Federated Learning: Distribuzione pesi e Aggregazione gradienti.}
-    \label{fig:fl_workflow}
+    \label{fig:fl\_workflow}
 \end{figure}
 
 Il processo tipico prevede:
@@ -224,9 +224,9 @@ Il processo tipico prevede:
 
 L'algoritmo FedAvg calcola la media pesata dei parametri del modello:
 \begin{equation}
-    w_{t+1} = \sum_{k=1}^{K} \frac{n_k}{n} w_{t+1}^k
+    w\_{t+1} = \sum\_{k=1}^{K} \frac{n\_k}{n} w\_{t+1}^k
 \end{equation}
-dove $n_k$ è il numero di esempi del worker $k$ e $n$ il totale degli esempi.
+dove $n\_k$ è il numero di esempi del worker $k$ e $n$ il totale degli esempi.
 
 \section{Metodologia ed Implementazione}
 Il sistema è stato implementato con 1 Aggregator e 6 Worker distribuiti come \textbf{Ray Actors}.

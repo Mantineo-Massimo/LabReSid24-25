@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1776171553.65885 "Report_HO17.tex" "Report_HO17.pdf" "Report_HO17" 1776171554.5895 2
+["pdflatex"] 1776172778.91758 "Report_HO17.tex" "Report_HO17.pdf" "Report_HO17" 1776172779.81215 2
   "../../assets/logo_unime_orizontale.png" 1774877987.99729 171862 c7596c17fd012c3711fd25d0cd4d3b22 ""
   "/etc/texmf/web2c/texmf.cnf" 1774877862.92368 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -221,6 +221,7 @@
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr12.tfm" 1254269338 12092 7b1546e2d096cfd5dcbd4049b0b1ec2e ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr17.tfm" 1254269338 12156 ca1ae6a3c8564e89597f1f993fba1608 ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr6.tfm" 1254269338 12048 c1068d0f4772be9b0ec447692e1d6d82 ""
+  "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr8.tfm" 1254269338 12064 a35db870f0b76c338d749c56dc030ef5 ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmri12.tfm" 1254269338 17144 271aaf9ebb339934b04110dc5211fba4 ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmri7.tfm" 1254269338 17168 78a37e395d0470967cfda94332b0716a ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmssbx10.tfm" 1254269338 11168 06d87f5698fd1b642d96449b7c8d90b0 ""
@@ -251,7 +252,6 @@
   "/usr/share/texmf/fonts/type1/public/lm/lmbxi10.pfb" 1255129361 112766 bdd4fa8b13a0d7dd137624085bd31d40 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb" 1254269338 30696 2654571912f9cd384da9f7cb8a60c568 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb" 1254269338 31113 04b711c9a4c7f8cb4ed784c6fc4cc1c5 ""
-  "/usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb" 1254269338 30635 833ec815d446ec453a4913fc26d24cbc ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr10.pfb" 1255129361 119235 f35b44530a1d90eb90fe15d9cba67ea0 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr12.pfb" 1255129361 113634 f99c44d58bae0863375faf0e1d74d612 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr17.pfb" 1255129361 119752 1bd8d06e4079df624bf59ce3ad7c9aa6 ""
@@ -276,11 +276,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1774877873.37872 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1774877914 6802369 e4393ba1408e1268397e5aac66ef022a ""
-  "Report_HO17.aux" 1776171554.48019 1212 e0e5b18238a7cb0706c0f884c87c6353 "pdflatex"
-  "Report_HO17.listing" 1776171554.45019 1033 0503769bfaaca27b0f7a7a3e17a16ced "pdflatex"
-  "Report_HO17.out" 1776171554.48019 919 3834cbed7d77e8d1734e8a6d997bb97f "pdflatex"
-  "Report_HO17.tex" 1776171508.68322 9563 a739532b99e1ce99be73520f9207bad9 ""
-  "Report_HO17.toc" 1776171554.48019 470 d9a86652d57a2f1a9d8f70dc169f947d "pdflatex"
+  "Report_HO17.aux" 1776172779.69614 1214 ac36bb61c24b22285698632d3f979de3 "pdflatex"
+  "Report_HO17.listing" 1776172779.66614 1034 29e8afae896257147532e3af55f38848 "pdflatex"
+  "Report_HO17.out" 1776172779.69714 919 3834cbed7d77e8d1734e8a6d997bb97f "pdflatex"
+  "Report_HO17.tex" 1776172711.06336 9568 21e2610c7a259958be6691aeb54649ee ""
+  "Report_HO17.toc" 1776172779.69714 470 d9a86652d57a2f1a9d8f70dc169f947d "pdflatex"
   (generated)
   "Report_HO17.aux"
   "Report_HO17.listing"
@@ -289,4 +289,3 @@
   "Report_HO17.pdf"
   "Report_HO17.toc"
   (rewritten before read)
-  "Report_HO17.listing"

@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -208,8 +208,8 @@ Per coprire gli obiettivi prestabiliti, l'ecosistema del laboratorio fa uso dell
         \draw[arrow, dashed] (t2) -- node[below, font=\tiny] {Waiting} (mutex);
         
         % Semaphore Side
-        \node[resource, right=5cm of res1] (res_pool) {Resource Pool (N=2)};
-        \node[lock, above=0.3cm of res_pool] (sem) {Semaphore (Count=1)};
+        \node[resource, right=5cm of res1] (res\_pool) {Resource Pool (N=2)};
+        \node[lock, above=0.3cm of res\_pool] (sem) {Semaphore (Count=1)};
         \node[thread, left=1cm of sem] (t3) {Thread C};
         \node[thread, below=0.5cm of t3] (t4) {Thread D};
         \node[thread, below=0.5cm of t4] (t5) {Thread E};
@@ -223,39 +223,39 @@ Per coprire gli obiettivi prestabiliti, l'ecosistema del laboratorio fa uso dell
         \node[above=0.8cm of sem, font=\bfseries\small] {COUNTING SEMAPHORE};
     \end{tikzpicture}
     \caption{Differenza concettuale tra Mutex (Esecuzione Esclusiva) e Semaforo (Accesso Limitato a pool).}
-    \label{fig:sync_mechanisms}
+    \label{fig:sync\_mechanisms}
 \end{figure}
 
 \subsection{Race Condition Senza Sincronizzazione}
 Nel primissimo passo viene volutamente violata la sincronizzazione. Il \texttt{shared\_counter++} viene eseguito da 10 thread 10.000 volte ciascuno.
 \begin{ccode}[Snippet Esercizio 1: Assenza di controllo in Sezione Critica]
-void* thread_function(void* arg) {
-    long thread_id = (long)arg;
-    for (int i = 0; i < MAX_VALUE; i++) {
-        shared_counter++; // <--- Non atomico: Read, Increment, Write
+void* thread\_function(void* arg) {
+    long thread\_id = (long)arg;
+    for (int i = 0; i < MAX\_VALUE; i++) {
+        shared\_counter++; // <--- Non atomico: Read, Increment, Write
     }
-    printf("Thread %ld: shared_counter = %d\n", thread_id, shared_counter);
-    pthread_exit(NULL);
+    printf("Thread %ld: shared\_counter = %d\n", thread\_id, shared\_counter);
+    pthread\_exit(NULL);
 }
 \end{ccode}
 
 \subsection{Mutua Esclusione con Mutex}
 L'approccio corretto del medesimo codice precedente fa uso del lock della libreria pthread passandogli l'indirizzo di un \texttt{counter\_mutex}.
 \begin{ccode}[Snippet Esercizio 2: Controllo tramite Mutex]
-for (int i = 0; i < MAX_VALUE; i++) {
-    pthread_mutex_lock(&counter_mutex);
-    shared_counter++; // <--- Protetto al 100% da accesso multi-thread
-    pthread_mutex_unlock(&counter_mutex);
+for (int i = 0; i < MAX\_VALUE; i++) {
+    pthread\_mutex\_lock(&counter\_mutex);
+    shared\_counter++; // <--- Protetto al 100% da accesso multi-thread
+    pthread\_mutex\_unlock(&counter\_mutex);
 }
 \end{ccode}
 
 \subsection{Gestione della Concorrenza Parziale (Semofori)}
 Il terzo esercizio introduce l'entità \texttt{sem\_t} di cui si decreta in fase di inizializzazione un contatore esatto di concorrenza.
 \begin{ccode}[Snippet Esercizio 3: Semaforo max limit 2]
-sem_wait(&max_concurrency_sem); // Thread attende il token
+sem\_wait(&max\_concurrency\_sem); // Thread attende il token
 // ... Critical Section accessibile per due thread contemporanei ...
 sleep(2); // Lavoro pesante simulato
-sem_post(&max_concurrency_sem); // Ritiro e rilascio
+sem\_post(&max\_concurrency\_sem); // Ritiro e rilascio
 \end{ccode}
 Il cui setup del semaforo poggia sulla chiamata \texttt{sem\_init(\&max\_concurrency\_sem, 0, 2);}.
 
@@ -272,23 +272,23 @@ L'esecuzione della pipeline ha restituito un comportamento pienamente conforme a
 
 \subsection{Output Senza Sincronizzazione}
 \begin{terminal}[Output di esecuzione ex1\_no\_sync]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex1_no_sync
-Thread 9: shared_counter = 76935
-Final value of shared_counter: 76935 (Expected: 100000)
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex1\_no\_sync
+Thread 9: shared\_counter = 76935
+Final value of shared\_counter: 76935 (Expected: 100000)
 \end{terminal}
 La chiara denotazione di "informazione perduta" riflette statisticamente che le operazioni non sono avvenute correttamente.
 
 \subsection{Output con Sincronizzazione Mutex}
 \begin{terminal}[Output di esecuzione ex2\_sync]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex2_sync
-Thread 4: shared_counter = 100000
-Final value of shared_counter: 100000 (Expected: 100000)
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex2\_sync
+Thread 4: shared\_counter = 100000
+Final value of shared\_counter: 100000 (Expected: 100000)
 \end{terminal}
 Con un perimetro sincronizzato l'incremento di ogni esecuzione finisce esattamente alla cifra teoricamente attesa di 100.000 (10.000 incremento a thread $\times$ 10 thread allocati).
 
 \subsection{Output Multi-Accesso Semaforo}
 \begin{terminal}[Output di esecuzione ex3\_semaphore]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex3_semaphore
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex3\_semaphore
 Thread 0 has ENTERED the critical section.
 Thread 1 has ENTERED the critical section.
 Thread 2 is waiting to enter the critical section...

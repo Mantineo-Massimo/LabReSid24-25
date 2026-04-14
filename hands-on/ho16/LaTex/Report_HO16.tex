@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -226,7 +226,7 @@ Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti dispost
         };
     \end{tikzpicture}
     \caption{Protocollo LCR su topologia a ring unidirezionale: l'ID 23 emerge come vincitore.}
-    \label{fig:leader_election_ring}
+    \label{fig:leader\_election\_ring}
 \end{figure}
 
 \section{Metodologia ed Implementazione}
@@ -234,15 +234,15 @@ Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti dispost
 Nel codice nativo in linguaggio C, \texttt{lcr.c} genera 5 FIFO Unidirezionali ($0 \rightarrow 1, 1 \rightarrow 2, \dots$) avvalendosi di \texttt{fork} per istanziare i componenti. Inoltre inserisce dinamicamente una riga di codice in sospensiva \texttt{sleep(1)} dopo la conversione \texttt{sscanf} interna al ciclo d'ascolto per facilitare l'occhio umano alla visualizzazione dell'elezione real-time.
 
 \begin{ccode}[Stralcio Regole LCR]
-if (recv_uid > my_uid) {
-    write(fd_out, buf, strlen(buf)+1); // Inoltro e divento passivo.
-    is_participant = 0;
-} else if (recv_uid < my_uid) {
+if (recv\_uid > my\_uid) {
+    write(fd\_out, buf, strlen(buf)+1); // Inoltro e divento passivo.
+    is\_participant = 0;
+} else if (recv\_uid < my\_uid) {
     // Scarto
 } else {
     // Il mio token non e' stato decapitato ed e' tornato a me!
-    sprintf(msg, "LEADER:%d", my_uid);
-    write(fd_out, msg, strlen(msg)+1);
+    sprintf(msg, "LEADER:%d", my\_uid);
+    write(fd\_out, msg, strlen(msg)+1);
 }
 \end{ccode}
 

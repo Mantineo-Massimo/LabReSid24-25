@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage{listings}
@@ -197,48 +197,48 @@ La soluzione è stata articolata in due coppie di programmi C (Client/Server) ch
         arrow/.style={-Stealth, thick, blue!70}
     ]
         % Server Sides
-        \node[box] (s_sock) {socket()};
-        \node[box, below=0.8cm of s_sock] (s_bind) {bind()};
-        \node[box, below=0.8cm of s_bind] (s_list) {listen()};
-        \node[box, below=0.8cm of s_list] (s_acc) {accept()};
-        \node[box, below=1.5cm of s_acc] (s_rw) {read/write};
+        \node[box] (s\_sock) {socket()};
+        \node[box, below=0.8cm of s\_sock] (s\_bind) {bind()};
+        \node[box, below=0.8cm of s\_bind] (s\_list) {listen()};
+        \node[box, below=0.8cm of s\_list] (s\_acc) {accept()};
+        \node[box, below=1.5cm of s\_acc] (s\_rw) {read/write};
 
         % Client Sides
-        \node[box, right=4cm of s_sock] (c_sock) {socket()};
-        \node[box, below=2.5cm of c_sock] (c_conn) {connect()};
-        \node[box, below=1.5cm of c_conn] (c_rw) {write/read};
+        \node[box, right=4cm of s\_sock] (c\_sock) {socket()};
+        \node[box, below=2.5cm of c\_sock] (c\_conn) {connect()};
+        \node[box, below=1.5cm of c\_conn] (c\_rw) {write/read};
 
         % Connections
-        \draw[arrow] (s_sock) -- (s_bind);
-        \draw[arrow] (s_bind) -- (s_list);
-        \draw[arrow] (s_list) -- (s_acc);
-        \draw[arrow] (c_sock) -- (c_conn);
-        \draw[arrow, dashed] (c_conn) -- node[above, font=\tiny, color=black] {TCP Handshake} (s_acc);
-        \draw[arrow] (s_acc) -- (s_rw);
-        \draw[arrow] (c_conn) -- (c_rw);
-        \draw[arrow, <->, color=orange!80!black] (s_rw) -- node[above, font=\tiny] {Data Exchange} (c_rw);
+        \draw[arrow] (s\_sock) -- (s\_bind);
+        \draw[arrow] (s\_bind) -- (s\_list);
+        \draw[arrow] (s\_list) -- (s\_acc);
+        \draw[arrow] (c\_sock) -- (c\_conn);
+        \draw[arrow, dashed] (c\_conn) -- node[above, font=\tiny, color=black] {TCP Handshake} (s\_acc);
+        \draw[arrow] (s\_acc) -- (s\_rw);
+        \draw[arrow] (c\_conn) -- (c\_rw);
+        \draw[arrow, <->, color=orange!80!black] (s\_rw) -- node[above, font=\tiny] {Data Exchange} (c\_rw);
 
         % Labels
-        \node[above=0.2cm of s_sock, font=\bfseries] {SERVER (TCP)};
-        \node[above=0.2cm of c_sock, font=\bfseries] {CLIENT (TCP)};
+        \node[above=0.2cm of s\_sock, font=\bfseries] {SERVER (TCP)};
+        \node[above=0.2cm of c\_sock, font=\bfseries] {CLIENT (TCP)};
     \end{tikzpicture}
     \caption{Workflow di interazione tra Client e Server tramite Socket API.}
-    \label{fig:socket_workflow}
+    \label{fig:socket\_workflow}
 \end{figure}
 
 \subsection{Implementazione TCP: Byte Stream}
 Il modello TCP adotta un approccio \textit{stateful}. Il server rimane in ascolto passivo (\texttt{listen}) finché non accetta (\texttt{accept}) una richiesta di connessione.
 \begin{ccode}[Snippet Inizializzazione TCP]
-int server_fd = socket(AF_INET, SOCK_STREAM, 0); // SOCK_STREAM per TCP
-bind(server_fd, (struct sockaddr *)&address, sizeof(address));
-listen(server_fd, 3);
-int new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
+int server\_fd = socket(AF\_INET, SOCK\_STREAM, 0); // SOCK\_STREAM per TCP
+bind(server\_fd, (struct sockaddr *)&address, sizeof(address));
+listen(server\_fd, 3);
+int new\_socket = accept(server\_fd, (struct sockaddr *)&address, (socklen\_t*)&addrlen);
 \end{ccode}
 
 \subsection{Implementazione UDP: Datagram Exchange}
 Il modello UDP è \textit{stateless}. Viene creato un socket di tipo \texttt{SOCK\_DGRAM}, permettendo l'invio immediato tramite \texttt{sendto} e la ricezione con \texttt{recvfrom}, che restituisce contestualmente l'indirizzo del mittente per eventuali repliche.
 \begin{ccode}[Snippet Inizializzazione UDP]
-int sockfd = socket(AF_INET, SOCK_DGRAM, 0); // SOCK_DGRAM per UDP
+int sockfd = socket(AF\_INET, SOCK\_DGRAM, 0); // SOCK\_DGRAM per UDP
 bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr));
 recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr *)&cliaddr, &len);
 \end{ccode}
@@ -247,10 +247,10 @@ recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr *)&cliaddr, &len);
 \subsection{Istruzioni di Esecuzione}
 Per testare la comunicazione TCP e UDP, compilare i sorgenti con GCC:
 \begin{terminal}[Build]
-$ gcc server_tcp.c -o s_tcp
-$ gcc client_tcp.c -o c_tcp
-$ gcc server_udp.c -o s_udp
-$ gcc client_udp.c -o c_udp
+$ gcc server\_tcp.c -o s\_tcp
+$ gcc client\_tcp.c -o c\_tcp
+$ gcc server\_udp.c -o s\_udp
+$ gcc client\_udp.c -o c\_udp
 \end{terminal}
 
 \section{Risultati}
@@ -262,7 +262,7 @@ Esaminando lo pseudo-filesystem \texttt{/proc}, è stato confermato che il kerne
 $ ls -l /proc/pid/fd
 3 -> socket:[105681]
 $ lsof -p pid | grep "UDP"
-server_ud  3u  IPv4  UDP *:8080 
+server\_ud  3u  IPv4  UDP *:8080 
 \end{terminal}
 
 \subsection{Analisi Wireshark}
@@ -270,7 +270,7 @@ La cattura del traffico ha evidenziato graficamente il \textbf{Three-Way Handsha
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{ho1/ho1_wireshark_tcp.png}
+    \includegraphics[width=0.85\textwidth]{ho1_wireshark\_tcp.png}
     \caption{Handshake TCP e trasferimento dati catturati su loopback.}
 \end{figure}
 

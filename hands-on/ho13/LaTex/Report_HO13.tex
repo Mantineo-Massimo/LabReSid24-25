@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -226,24 +226,24 @@ Il meccanismo di attesa e segnalazione permette di coordinare l'esecuzione di du
         \node[msg] at (2.5, -5.5) {child\_done = 1};
     \end{tikzpicture}
     \caption{Diagramma di sequenza della sincronizzazione tramite Condition Variables (Wait/Signal).}
-    \label{fig:cond_var_seq}
+    \label{fig:cond\_var\_seq}
 \end{figure}
 
 Questa tipologia di codice mima al 100\% la gestione in background dello scheduler per attendere flussi operativi prima di uscire in un \texttt{return 0;}.
 \begin{ccode}[Snippet Esercizio 1: Padre vs Figlio]
 // T-PADRE: Si blocca se non pronto
-pthread_mutex_lock(&lock);
-while (child_done == 0) {  // Uso un while ciclico di protezione base
-    pthread_cond_wait(&cond, &lock);
+pthread\_mutex\_lock(&lock);
+while (child\_done == 0) {  // Uso un while ciclico di protezione base
+    pthread\_cond\_wait(&cond, &lock);
 }
 // Se e' qui in basso, cond\_signal e' arrivato e lock e' stato ripreso in mano!
-pthread_mutex_unlock(&lock);
+pthread\_mutex\_unlock(&lock);
 
 // T-FIGLIO: Avvisa la terminazione
-pthread_mutex_lock(&lock);
-child_done = 1;              
-pthread_cond_signal(&cond); // Rende udibile ai pendenti il cambiamento
-pthread_mutex_unlock(&lock);
+pthread\_mutex\_lock(&lock);
+child\_done = 1;              
+pthread\_cond\_signal(&cond); // Rende udibile ai pendenti il cambiamento
+pthread\_mutex\_unlock(&lock);
 \end{ccode}
 
 \subsection{Barriera a Broadcast (\texttt{ex2\_barrier.c})}
@@ -251,11 +251,11 @@ Prevede la sostituzione radicale nel \textit{modus operandi} di blocco della bar
 \begin{ccode}[Snippet Esercizio 2: Arrivo globale al punto zero]
 if (count == N) {
     // Ultimo thread arrivato al checkpoint
-    pthread_cond_broadcast(&cond); // -> Sveglia massivamente da 0 N thread in coda
+    pthread\_cond\_broadcast(&cond); // -> Sveglia massivamente da 0 N thread in coda
 } else {
     // Si accodano attendendo
     while (count < N) {
-        pthread_cond_wait(&cond, &lock);
+        pthread\_cond\_wait(&cond, &lock);
     }
 }
 \end{ccode}
@@ -273,7 +273,7 @@ Le compilazioni e le catture da log sul terminale attestano il soddisfacimento d
 
 \subsection{Output Simulazione Join}
 \begin{terminal}[System V Message Queues - Risultati]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho13$ ./ex1_join
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho13$ ./ex1\_join
 Padre: Creo il thread figlio.
 Padre: In attesa della terminazione del figlio...
 Thread Figlio: Iniziato. Faccio un po' di lavoro...

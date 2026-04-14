@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -229,29 +229,29 @@ L'architettura del sistema si basa sulla coordinazione di tre semafori per gesti
         \node[below=0.1cm of cons, font=\tiny] {sem\_wait(filled\_slots)};
     \end{tikzpicture}
     \caption{Workflow del pattern Produttore-Consumatore con buffer limitato coordinato da semafori.}
-    \label{fig:prod_cons}
+    \label{fig:prod\_cons}
 \end{figure}
 
 Il buffer circolare finito è gestito da tre entità di blocco.
 \begin{ccode}[Snippet Esercizio 2: Tre Semafori Coordinati]
 // Sincronizzazione:
-sem_init(&empty_slots, 0, BUFFER_SIZE);  // Attesta quanti spazi sono vuoti
-sem_init(&filled_slots, 0, 0);           // Attesta quanti spazi sono pieni
-sem_init(&mutex, 0, 1);                  // Regolamenta l'esclusione sul buffer
+sem\_init(&empty\_slots, 0, BUFFER\_SIZE);  // Attesta quanti spazi sono vuoti
+sem\_init(&filled\_slots, 0, 0);           // Attesta quanti spazi sono pieni
+sem\_init(&mutex, 0, 1);                  // Regolamenta l'esclusione sul buffer
 
 // Lato Produttore:
-sem_wait(&empty_slots);  // Preleva uno slot "vuoto"
-sem_wait(&mutex);        // Entra
+sem\_wait(&empty\_slots);  // Preleva uno slot "vuoto"
+sem\_wait(&mutex);        // Entra
 buffer[in] = item;       // PRODUCE
-sem_post(&mutex);        // Esce
-sem_post(&filled_slots); // Regala un token "pieno" al consumatore
+sem\_post(&mutex);        // Esce
+sem\_post(&filled\_slots); // Regala un token "pieno" al consumatore
 
 // Lato Consumatore:
-sem_wait(&filled_slots); // Preleva uno slot "pieno"
-sem_wait(&mutex);        // Entra
+sem\_wait(&filled\_slots); // Preleva uno slot "pieno"
+sem\_wait(&mutex);        // Entra
 int item = buffer[out];  // CONSUMA
-sem_post(&mutex);        // Esce
-sem_post(&empty_slots);  // Converte il "pieno" appena letto in "vuoto"
+sem\_post(&mutex);        // Esce
+sem\_post(&empty\_slots);  // Converte il "pieno" appena letto in "vuoto"
 \end{ccode}
 
 
@@ -267,7 +267,7 @@ L'esecuzione del codice ha fornito log testuali perfetti di dimostrazione del co
 
 \subsection{Output Barriera}
 \begin{terminal}[Output di Esecuzione - Memoria Condivisa]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho12$ ./ex1_barrier
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho12$ ./ex1\_barrier
 Thread 1: Arrivato alla barriera (2/5).
 Thread 2: Arrivato alla barriera (3/5).
 Thread 3: Arrivato alla barriera (4/5).

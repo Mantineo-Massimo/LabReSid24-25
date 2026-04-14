@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1776171991.4026 "Report_HO19.tex" "Report_HO19.pdf" "Report_HO19" 1776171992.24921 0
+["pdflatex"] 1776172780.90105 "Report_HO19.tex" "Report_HO19.pdf" "Report_HO19" 1776172781.75363 2
   "../../assets/logo_unime_orizontale.png" 1774877987.99729 171862 c7596c17fd012c3711fd25d0cd4d3b22 ""
   "/etc/texmf/web2c/texmf.cnf" 1774877862.92368 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -219,7 +219,9 @@
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr10.tfm" 1254269338 12056 7e13df7fe4cbce21b072ba7c4f4deb6e ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr12.tfm" 1254269338 12092 7b1546e2d096cfd5dcbd4049b0b1ec2e ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr17.tfm" 1254269338 12156 ca1ae6a3c8564e89597f1f993fba1608 ""
+  "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr5.tfm" 1254269338 12020 46464c854bf317de2a7a0bbe4a1160ca ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr6.tfm" 1254269338 12048 c1068d0f4772be9b0ec447692e1d6d82 ""
+  "/usr/share/texmf/fonts/tfm/public/lm/ec-lmr8.tfm" 1254269338 12064 a35db870f0b76c338d749c56dc030ef5 ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmri10.tfm" 1254269338 17148 9556e1b5f936b77a796f68d2d559ba99 ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmri12.tfm" 1254269338 17144 271aaf9ebb339934b04110dc5211fba4 ""
   "/usr/share/texmf/fonts/tfm/public/lm/ec-lmss8.tfm" 1254269338 11180 705632ac6b4fb69204ad970192cdf4e5 ""
@@ -248,9 +250,7 @@
   "/usr/share/texmf/fonts/type1/public/lm/lmr10.pfb" 1255129361 119235 f35b44530a1d90eb90fe15d9cba67ea0 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr12.pfb" 1255129361 113634 f99c44d58bae0863375faf0e1d74d612 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr17.pfb" 1255129361 119752 1bd8d06e4079df624bf59ce3ad7c9aa6 ""
-  "/usr/share/texmf/fonts/type1/public/lm/lmr5.pfb" 1255129361 120387 212cad1e763d510fc9c3ce2466274a57 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr6.pfb" 1255129361 123394 d390152bb30feeb496aaaa93299ee9ba ""
-  "/usr/share/texmf/fonts/type1/public/lm/lmr8.pfb" 1255129361 122174 a7a08406857c9530a0320a2517f60370 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmri10.pfb" 1255129361 112593 fda2373ba4420af33949610de4c28fe8 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmss8.pfb" 1255129361 94400 e33ecfb646a9f148e2e53da01a9168fe ""
   "/usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb" 1255129361 119663 e82fa1a58f98ccd89bdbd77311ac9cf1 ""
@@ -269,11 +269,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1774877873.37872 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1774877914 6802369 e4393ba1408e1268397e5aac66ef022a ""
-  "Report_HO19.aux" 1776171992.14328 1481 bc8006a03377b1169fb687e7965ca94e "pdflatex"
-  "Report_HO19.listing" 1776171992.12028 262 2013a3f05f3c6cb82bf6f9dd73a08486 "pdflatex"
-  "Report_HO19.out" 1776171992.14428 1282 627b90722aeb632d7bbdb18991ef9263 "pdflatex"
-  "Report_HO19.tex" 1776171453.02555 9060 9315ea82fbc0af503e10bd0e9574d49f ""
-  "Report_HO19.toc" 1776171992.14428 650 2278650e4b3ef24bfda7288208bd34fc "pdflatex"
+  "Report_HO19.aux" 1776172781.65311 1482 c41e7897bf2cd4abb88900c4ee06f413 "pdflatex"
+  "Report_HO19.listing" 1776172781.63011 262 2013a3f05f3c6cb82bf6f9dd73a08486 "pdflatex"
+  "Report_HO19.out" 1776172781.65311 1282 627b90722aeb632d7bbdb18991ef9263 "pdflatex"
+  "Report_HO19.tex" 1776172711.08736 9070 05fa372d9c43764039dde05079494c20 ""
+  "Report_HO19.toc" 1776172781.65311 650 2278650e4b3ef24bfda7288208bd34fc "pdflatex"
   (generated)
   "Report_HO19.aux"
   "Report_HO19.listing"
@@ -282,4 +282,3 @@
   "Report_HO19.pdf"
   "Report_HO19.toc"
   (rewritten before read)
-  "Report_HO19.listing"

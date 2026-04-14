@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -179,19 +179,19 @@ L'efficienza del multithreading moderno dipende strettamente dall'interazione tr
 \begin{itemize}
     \item \textbf{SMT e Hyper-Threading}: Molti processori moderni presentano core logici che condividono le unità di esecuzione fisiche. Senza affinità, lo scheduler potrebbe posizionare due thread pesanti sullo stesso core fisico, dimezzando le prestazioni.
     \item \textbf{Gerarchia delle Cache e NUMA}: L'affinità hardware (\textit{Hard Affinity}) è cruciale per mantenere i dati nelle cache L1/L2 locali al core, evitando costosi accessi alla memoria principale (\texttt{RAM}) causati dalla migrazione dei thread tra core distanti.
-    \item \textbf{Bitmasking (\texttt{cpu_set_t})}: Sotto Linux, l'affinità viene gestita tramite maschere di bit che rappresentano la mappa logica delle CPU. Le macro POSIX permettono una manipolazione granulare di questi set.
+    \item \textbf{Bitmasking (\texttt{cpu\_set\_t})}: Sotto Linux, l'affinità viene gestita tramite maschere di bit che rappresentano la mappa logica delle CPU. Le macro POSIX permettono una manipolazione granulare di questi set.
 \end{itemize}
 
 \section{Metodologia ed Implementazione}
 L'implementazione prevede la suddivisione dell'intervallo di ricerca e l'assegnazione deterministica dei core.
 
 \subsection{Parallelizzazione Alternata}
-Il carico viene distribuito equamente tramite una struttura \texttt{thread_data_t}, garantendo che ogni thread processi un sotto-intervallo unico (\textit{Static Partitioning}).
+Il carico viene distribuito equamente tramite una struttura \texttt{thread\_data\_t}, garantendo che ogni thread processi un sotto-intervallo unico (\textit{Static Partitioning}).
 \begin{ccode}[Snippet Gestione Affinity]
-cpu_set_t cpuset;
-CPU_ZERO(&cpuset);
-CPU_SET(data->id % num_cores, &cpuset); // Binding deterministico
-pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+cpu\_set\_t cpuset;
+CPU\_ZERO(&cpuset);
+CPU\_SET(data->id % num\_cores, &cpuset); // Binding deterministico
+pthread\_setaffinity\_np(pthread\_self(), sizeof(cpu\_set\_t), &cpuset);
 \end{ccode}
 
 \subsection{Algoritmo di Verifica}
@@ -201,7 +201,7 @@ Viene utilizzato un algoritmo di test di primalità ottimizzato (fino alla radic
 \subsection{Istruzioni di Esecuzione}
 Compilazione con supporto ai thread (pthread):
 \begin{terminal}[Build]
-$ gcc prime_affinity.c -o affinity -pthread
+$ gcc prime\_affinity.c -o affinity -pthread
 \end{terminal}
 
 \section{Risultati}
@@ -211,8 +211,8 @@ La validazione è stata condotta monitorando la distribuzione del carico in temp
 Tramite il comando \texttt{ps -eLo pid,tid,psr}, è stato verificato che il thread principale e i thread worker occupassero core distinti senza fluttuazioni.
 \begin{terminal}[Monitoraggio PSR]
   PID   TID PSR CMD
-20164 20165   0 ./prime_affinity (Thread 0)
-20164 20166   1 ./prime_affinity (Thread 1)
+20164 20165   0 ./prime\_affinity (Thread 0)
+20164 20166   1 ./prime\_affinity (Thread 1)
 \end{terminal}
 
 \subsection{Vantaggi Prestazionali}

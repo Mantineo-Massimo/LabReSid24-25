@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage{listings}
@@ -194,53 +194,53 @@ Il codice sorgente per il multicast si basa su due strutture principali e sull'u
 
 \begin{ccode}[1 e 2: Creazione Socket e SO\_REUSEADDR]
 int sockfd;
-if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+if ((sockfd = socket(AF\_INET, SOCK\_DGRAM, 0)) < 0) {
     perror("Socket creation failed");
-    exit(EXIT_FAILURE);
+    exit(EXIT\_FAILURE);
 }
 
 int reuse = 1;
-if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
-    perror("SO_REUSEADDR failed");
-    exit(EXIT_FAILURE);
+if (setsockopt(sockfd, SOL\_SOCKET, SO\_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+    perror("SO\_REUSEADDR failed");
+    exit(EXIT\_FAILURE);
 }
 \end{ccode}
 
 Si effettua quindi il bind e si provvede all'iscrizione al gruppo Multicast (nel nostro caso \texttt{239.0.0.1}).
 \begin{ccode}[3 e 4: Bind e Add Membership]
 // Bind
-local_addr.sin_family = AF_INET;
-local_addr.sin_port = htons(PORT);
-local_addr.sin_addr.s_addr = INADDR_ANY;
-bind(sockfd, (struct sockaddr *)&local_addr, sizeof(local_addr));
+local\_addr.sin\_family = AF\_INET;
+local\_addr.sin\_port = htons(PORT);
+local\_addr.sin\_addr.s\_addr = INADDR\_ANY;
+bind(sockfd, (struct sockaddr *)&local\_addr, sizeof(local\_addr));
 
 // Iscrizione Multicast
-struct ip_mreq multicast_req;
-multicast_req.imr_multiaddr.s_addr = inet_addr("239.0.0.1");
-multicast_req.imr_interface.s_addr = INADDR_ANY;
+struct ip\_mreq multicast\_req;
+multicast\_req.imr\_multiaddr.s\_addr = inet\_addr("239.0.0.1");
+multicast\_req.imr\_interface.s\_addr = INADDR\_ANY;
 
-setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &multicast_req, sizeof(multicast_req));
+setsockopt(sockfd, IPPROTO\_IP, IP\_ADD\_MEMBERSHIP, &multicast\_req, sizeof(multicast\_req));
 \end{ccode}
 
 \newpage
 Nel loop principale si esegue in ultimo la normale \texttt{recvfrom()} bloccante per ricevere il payload su pacchetti inviati in UDP.
 \begin{ccode}[5: Ricezione dei messaggi UDP]
 while (1) {
-    int n = recvfrom(sockfd, buffer, MAX_BUFFER - 1, 0, 
-                     (struct sockaddr *)&sender_addr, &sender_len);
+    int n = recvfrom(sockfd, buffer, MAX\_BUFFER - 1, 0, 
+                     (struct sockaddr *)&sender\_addr, &sender\_len);
     // ... logic per stampa e gestione terminazione ...
 }
 
 // 6: Dropout in dismissione
-setsockopt(sockfd, IPPROTO_IP, IP_DROP_MEMBERSHIP, &multicast_req, sizeof(multicast_req));
+setsockopt(sockfd, IPPROTO\_IP, IP\_DROP\_MEMBERSHIP, &multicast\_req, sizeof(multicast\_req));
 \end{ccode}
 
 
 \subsection{Istruzioni di Esecuzione}
 Compilazione della suite multicast:
 \begin{terminal}[Multicast Build]
-$ gcc multicast_server.c -o server
-$ gcc multicast_client.c -o client
+$ gcc multicast\_server.c -o server
+$ gcc multicast\_client.c -o client
 \end{terminal}
 
 \section{Risultati}
@@ -277,13 +277,13 @@ Ricevuto: Hello, Multicast! | (Da: 127.0.0.1:46155)
 Entrambi i socket UDP sono stati abilitati alla convivenza sullo stesso port listening e intercettano con precisione i messaggi mandati in overlay sull'IP appartenente al gruppo di classe D.
 
 \subsection{Analisi Wireshark}
-L'analisi del traffico tramite Wireshark (Figura \ref{fig:wireshark_multicast}) conferma il corretto inoltro dei pacchetti UDP verso l'indirizzo di classe D \texttt{239.0.0.1}. Si osserva come un singolo pacchetto inviato dal server venga ricevuto da tutti i client iscritti al gruppo, minimizzando il carico di rete rispetto ad una comunicazione unicast multipla.
+L'analisi del traffico tramite Wireshark (Figura \ref{fig:wireshark\_multicast}) conferma il corretto inoltro dei pacchetti UDP verso l'indirizzo di classe D \texttt{239.0.0.1}. Si osserva come un singolo pacchetto inviato dal server venga ricevuto da tutti i client iscritti al gruppo, minimizzando il carico di rete rispetto ad una comunicazione unicast multipla.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{ho6/ho6_wireshark_multicast.png}
+    \includegraphics[width=0.9\textwidth]{ho6_wireshark\_multicast.png}
     \caption{Cattura Wireshark: Flusso Multicast UDP verso 239.0.0.1}
-    \label{fig:wireshark_multicast}
+    \label{fig:wireshark\_multicast}
 \end{figure}
 
 \section{Conclusioni e Sviluppi Futuri}

@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 \usepackage{listings}
@@ -176,13 +176,13 @@
 \newpage
 
 \section{Problem Statement}
-L'obiettivo della seconda esercitazione (Hands-On 2) è l'analisi comparativa dei modelli di I/O nel contesto della programmazione di rete sotto Linux. Il \textit{core} dell'attività consiste nell'implementazione di un servizio di validazione della \textbf{Successione di Fibonacci}. La sfida tecnica risiede nel gestire flussi di dati sequenziali in due scenari distinti: un server a modello \textbf{bloccante} (iterativo) e un server \textbf{non-bloccante} basato su multiplexing. Il sistema deve garantire che ogni numero ricevuto dal client segua rigorosamente la legge di ricorrenza $F_n = F_{n-1} + F_{n-2}$, restituendo un acknowledgment (\texttt{ACK_FIB_OK}) o segnali di errore in caso di divergenza.
+L'obiettivo della seconda esercitazione (Hands-On 2) è l'analisi comparativa dei modelli di I/O nel contesto della programmazione di rete sotto Linux. Il \textit{core} dell'attività consiste nell'implementazione di un servizio di validazione della \textbf{Successione di Fibonacci}. La sfida tecnica risiede nel gestire flussi di dati sequenziali in due scenari distinti: un server a modello \textbf{bloccante} (iterativo) e un server \textbf{non-bloccante} basato su multiplexing. Il sistema deve garantire che ogni numero ricevuto dal client segua rigorosamente la legge di ricorrenza $F\_n = F\_{n-1} + F\_{n-2}$, restituendo un acknowledgment (\texttt{ACK\_FIB\_OK}) o segnali di errore in caso di divergenza.
 
 \section{Stato dell'Arte}
 La gestione della concorrenza e delle attese è un pilastro dei sistemi distribuiti.
 \begin{itemize}
     \item \textbf{I/O Bloccante}: Rappresenta il comportamento di default dei socket Unix. Una chiamata a \texttt{read()} sospende il thread del chiamante finché il buffer di ricezione del kernel non contiene dati. Sebbene semplice, questo modello soffre di gravi problemi di scalabilità (scarsa \textit{responsiveness}) in presenza di client lenti o multipli.
-    \item \textbf{I/O Non-Bloccante}: Tramite la syscall \texttt{fcntl(O_NONBLOCK)}, il socket viene istruito a non sospendere il processo; se i dati non sono pronti, la funzione ritorna immediatamente l'errore \texttt{EAGAIN}.
+    \item \textbf{I/O Non-Bloccante}: Tramite la syscall \texttt{fcntl(O\_NONBLOCK)}, il socket viene istruito a non sospendere il processo; se i dati non sono pronti, la funzione ritorna immediatamente l'errore \texttt{EAGAIN}.
     \item \textbf{Multiplexing con \texttt{select()}}: Per evitare il \textit{busy-waiting} (polling continuo) su socket non-bloccanti, si utilizza la \texttt{select()}, che permette di monitorare un intero set di file descriptor, svegliando il processo solo quando almeno uno di essi è pronto per un'operazione di I/O.
 \end{itemize}
 
@@ -193,7 +193,7 @@ L'implementazione prevede un client generatore e due varianti di server. La logi
 Il client calcola i termini della successione e li trasmette serializzati come stringhe.
 \begin{ccode}[Logica Fibonacci Client]
 long long a = 0, b = 1, next;
-for (int i = 0; i < MAX_FIB; i++) {
+for (int i = 0; i < MAX\_FIB; i++) {
     sprintf(msg, "%lld", a);
     send(sock, msg, strlen(msg), 0);
     // ... attesa ACK ...
@@ -204,19 +204,19 @@ for (int i = 0; i < MAX_FIB; i++) {
 \subsection{Server: Modelli a Confronto}
 Il server bloccante utilizza un semplice loop \texttt{accept} $\rightarrow$ \texttt{read}. Il server non-bloccante, invece, configura i socket tramite:
 \begin{ccode}[Snippet Configurazione Non-Bloccante]
-int flags = fcntl(master_socket, F_GETFL, 0);
-fcntl(master_socket, F_SETFL, flags | O_NONBLOCK);
-activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
+int flags = fcntl(master\_socket, F\_GETFL, 0);
+fcntl(master\_socket, F\_SETFL, flags | O\_NONBLOCK);
+activity = select(max\_sd + 1, &readfds, NULL, NULL, NULL);
 \end{ccode}
-Questa architettura permette di mantenere stati di validazione indipendenti per ogni client tramite una struttura \texttt{client_state}.
+Questa architettura permette di mantenere stati di validazione indipendenti per ogni client tramite una struttura \texttt{client\_state}.
 
 
 \subsection{Istruzioni di Esecuzione}
 La compilazione dei modelli bloccanti e non-bloccanti avviene tramite GCC:
 \begin{terminal}[GCC Build]
-$ gcc server_tcp_block.c -o s_block
-$ gcc server_tcp_nonblock.c -o s_nonblock
-$ gcc client_tcp.c -o client
+$ gcc server\_tcp\_block.c -o s\_block
+$ gcc server\_tcp\_nonblock.c -o s\_nonblock
+$ gcc client\_tcp.c -o client
 \end{terminal}
 
 \section{Risultati}
@@ -224,17 +224,17 @@ La validazione è stata condotta simulando accessi concorrenti e ispezionando l'
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{ho2/ho2_wireshark_nonblocking.png}
+    \includegraphics[width=0.9\textwidth]{ho2_wireshark_nonblocking.png}
     \caption{Monitoraggio socket non-bloccanti su Wireshark.}
-    \label{fig:wireshark_nonblocking}
+    \label{fig:wireshark\_nonblocking}
 \end{figure}
 
 \subsection{Validazione Funzionale}
 Entrambi i server riconoscono correttamente la sequenza di Fibonacci. Tuttavia, i log evidenziano la differenza nel determinismo temporale:
 \begin{terminal}[Log Multiplexing]
 New connection, socket fd: 4, ip: 127.0.0.1
-Received: 0 from socket 4 -> ACK_FIB_OK
-Received: 1 from socket 5 -> ACK_FIB_OK (Gestione Parallela)
+Received: 0 from socket 4 -> ACK\_FIB\_OK
+Received: 1 from socket 5 -> ACK\_FIB\_OK (Gestione Parallela)
 \end{terminal}
 
 \subsection{Analisi Wireshark}

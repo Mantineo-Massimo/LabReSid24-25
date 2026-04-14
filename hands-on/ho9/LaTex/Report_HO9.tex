@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.geometric}
 \usepackage{listings}
@@ -223,16 +223,16 @@ L'implementazione si focalizza sull'uso di tool di introspezione binaria nel con
         \node[above=0.1cm of ld, font=\tiny, color=red!70] {nm / readelf};
     \end{tikzpicture}
     \caption{Pipeline di trasformazione dal codice sorgente al binario ELF con gestione della Tabella dei Simboli.}
-    \label{fig:compilation_pipeline}
+    \label{fig:compilation\_pipeline}
 \end{figure}
 
 \subsection{Analisi dei Simboli con \texttt{nm}}
-È stata creata un'architettura multi-file (\texttt{main.c}, \texttt{ex1_symbols.c}) per osservare il comportamento dei simboli \texttt{U} (Undefined) e \texttt{T} (Text).
+È stata creata un'architettura multi-file (\texttt{main.c}, \texttt{ex1\_symbols.c}) per osservare il comportamento dei simboli \texttt{U} (Undefined) e \texttt{T} (Text).
 \begin{terminal}[Analisi Tabella Simboli]
-$ nm ex1_symbols.o
-0000000000000000 D var_globale   <-- Data (D)
+$ nm ex1\_symbols.o
+0000000000000000 D var\_globale   <-- Data (D)
                  U printf        <-- Indefinito (U)
-0000000000000000 T funzione_test <-- Text (T)
+0000000000000000 T funzione\_test <-- Text (T)
 \end{terminal}
 
 \subsection{Compilazione Modulare}

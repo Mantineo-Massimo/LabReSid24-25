@@ -34,7 +34,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -221,7 +221,7 @@ L'architettura del sistema si basa sul modello a tre stadi (Map, Shuffle, Reduce
         \node[above=0.1cm of map2, font=\tiny\itshape, color=blue!70] {@ray.remote};
     \end{tikzpicture}
     \caption{Workflow del calcolo distribuito MapReduce orchestrato tramite Ray.io.}
-    \label{fig:mapreduce_flow}
+    \label{fig:mapreduce\_flow}
 \end{figure}
 
 L'architettura del sistema prevede:
@@ -246,7 +246,7 @@ L'esecuzione sul testo completo del romanzo ("The Lord of the Rings") ha prodott
 
 \begin{terminal}[Output MapReduce Distribuito]
 Starting distributed MapReduce on lotr.txt...
-Report generated: lotr_report.txt
+Report generated: lotr\_report.txt
 Top 10 words:
   the: 11705
   and: 7555

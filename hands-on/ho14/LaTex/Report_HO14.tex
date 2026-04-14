@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -204,7 +204,7 @@ Il MidTerm (Hands-On 14) riunisce ed eleva le competenze acquisite operando fino
         \node[below=0.1cm of serv, font=\itshape\tiny] {Mutex Protected Resources};
     \end{tikzpicture}
     \caption{Architettura del Sistema Bancario Distribuito Multi-Client.}
-    \label{fig:banking_arch}
+    \label{fig:banking\_arch}
 \end{figure}
 
 Il sistema si fonda su un'architettura **Client-Server TCP** e prevede limitatori rigorosi per la concorrenza (10 Threads), più protezioni di memoria contro la \textit{Race Condition} che andrebbe a distruggere la congruenza dell'estratto conto.
@@ -233,10 +233,10 @@ typedef struct {
 \subsection{Protezione Logica e Limitazione Server}
 Per obbedire al vincolo "Al massimo 10 thread", abbiamo implementato un semaforo limitante pre-accept:
 \begin{ccode}[Limitatore di traffico Server]
-// Inizializzato a MAX_NUM (10)
-sem_wait(&thread_limiter); 
-client_sock = accept(server_sock, ...);
-// Viene passata la richiesta a pthread_create
+// Inizializzato a MAX\_NUM (10)
+sem\_wait(&thread\_limiter); 
+client\_sock = accept(server\_sock, ...);
+// Viene passata la richiesta a pthread\_create
 \end{ccode}
 Ogniqualvolta una richiesta accede al DB, acquisisce un \texttt{pthread\_mutex\_lock(\&db\_lock)}. Se è un inserzione (\texttt{ADD}), scansiona i duplicati di ID per prevenire collisioni logiche. Lo stream testuale inviato dai socket viene parsate comodamente tramite \texttt{sscanf}.
 
@@ -285,7 +285,7 @@ I test condotti sull'interfaccia di Loopback confermano a livello ISO/OSI il cor
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{ho14/ho14_wireshark_rpc.png}
+    \includegraphics[width=1\textwidth]{ho14/ho14_wireshark\_rpc.png}
     \caption{Cattura Wireshark: TCP 3-Way Handshake, Invio Dati (PSH) e Teardown}
 \end{figure}
 

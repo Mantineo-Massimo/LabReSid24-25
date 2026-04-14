@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -211,15 +211,15 @@ Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **
         \node[fifo, right=0.5cm of a2, align=center] {Inter-Process\\Communication\\via Named Pipes};
     \end{tikzpicture}
     \caption{Topologia distribuita a diamante per la simulazione dell'algoritmo di Flooding.}
-    \label{fig:flooding_topology}
+    \label{fig:flooding\_topology}
 \end{figure}
 
 Dal parent \texttt{main()} del C, il master lancia ciclicamente la chiamata di Sistema \texttt{mkfifo("/tmp/fifo\_src\_dst", 0666)} generando i tubi direzionali:
 \begin{ccode}[Creazione Dinamica]
-for(int i = 0; i < MAX_AGENTS; i++) {
-    for(int j = 0; j < num_neighbors[i]; j++) {
+for(int i = 0; i < MAX\_AGENTS; i++) {
+    for(int j = 0; j < num\_neighbors[i]; j++) {
         char fname[64];
-        sprintf(fname, "/tmp/fifo_%d_%d", i, neighbors[i][j]);
+        sprintf(fname, "/tmp/fifo\_%d\_%d", i, neighbors[i][j]);
         mkfifo(fname, 0666);
     }
 }
@@ -233,7 +233,7 @@ Le FIFO in ambiente Linux subiscono la natura \textit{Bloccante} della Syscall \
 void stf(int id, int* state, int sender, const char* info) {
     if (*state == 0) { // PASSIVE TO DONE
         *state = 1; 
-        for(int i = 0; i < num_neighbors[id]; i++) {
+        for(int i = 0; i < num\_neighbors[id]; i++) {
             int neigh = neighbors[id][i];
             if (neigh != sender) msg(id, neigh, info);
         }
@@ -260,11 +260,11 @@ Topologia: 4 Nodi a Diamante (0 Initiator)
 => [AGENTE 0] INIZIATORE: Genero il messaggio di Flooding iniziale.
     -> [AGENTE 0] Propaga messaggio al Nodo 1
     -> [AGENTE 0] Propaga messaggio al Nodo 2
-[AGENTE 1] RICEZIONE da Nodo 0: 'ALLERTA_METEO'. TRASIZIONE a DONE e Propagazione.
+[AGENTE 1] RICEZIONE da Nodo 0: 'ALLERTA\_METEO'. TRASIZIONE a DONE e Propagazione.
     -> [AGENTE 1] Propaga messaggio al Nodo 3
-[AGENTE 2] RICEZIONE da Nodo 0: 'ALLERTA_METEO'. TRASIZIONE a DONE e Propagazione.
+[AGENTE 2] RICEZIONE da Nodo 0: 'ALLERTA\_METEO'. TRASIZIONE a DONE e Propagazione.
     -> [AGENTE 2] Propaga messaggio al Nodo 3
-[AGENTE 3] RICEZIONE da Nodo 1: 'ALLERTA_METEO'. TRASIZIONE a DONE e Propagazione.
+[AGENTE 3] RICEZIONE da Nodo 1: 'ALLERTA\_METEO'. TRASIZIONE a DONE e Propagazione.
     -> [AGENTE 3] Propaga messaggio al Nodo 2
 [AGENTE 2] SCARTO msg da Nodo 3 (Gia' elaborato).
 [AGENTE 3] SCARTO msg da Nodo 2 (Gia' elaborato).

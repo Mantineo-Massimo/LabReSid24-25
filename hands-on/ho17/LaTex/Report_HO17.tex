@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.symbols}
 \usepackage{listings}
@@ -178,7 +178,7 @@ Nell'ambito dell'astrazione logica di nodi di rete come processi UNIX, si richie
 L'algoritmo di Bellman-Ford assicura, in reti prive di cicli a costo negativo, la convergenza totale dei pesi. 
 Esso si esprime tramite l'assioma di calcolo iterativo:
 \begin{equation}
-    D(x, y) = \min_v \left\{ c(x,v) + D(v,y) \right\}
+    D(x, y) = \min\_v \left\{ c(x,v) + D(v,y) \right\}
 \end{equation}
 Dove:
 \begin{itemize}
@@ -222,7 +222,7 @@ Siccome il grafo visivo manca all'appello, optiamo per disporre una trincea a \t
         };
     \end{tikzpicture}
     \caption{Topologia del grafo pesato e calcolo iterativo dei cammini minimi (Distance-Vector).}
-    \label{fig:bellman_ford_graph}
+    \label{fig:bellman\_ford\_graph}
 \end{figure}
 
 Abbiamo programmato volontariamente un trabocchetto: benché esista l'arco diretto Nodo 2 $\rightarrow$ Target 0 al costo di asticella `5`, la somma dei pesi passando attivamente per Nodo 1 costa solamente `3` ($1+2$). Costringiamo così in maniera fittizia l'algoritmo a ricalcolare le metriche ignorando l'arco apparentemente più palese (Il nodo 3 dista `1` dal 2, per un totale di `4`, ed in quanto esso dista `4` dal Nodo 1 che aggiunge il fatidico `2`, la via più ovvia peserebbe `6`. Viene scelto `4`).
@@ -236,10 +236,10 @@ $ ./programma
 \end{terminal}
 
 \section{Risultati}
-Si è provveduto allo sfoggio del binario, compilato per iterazioni continue ed abortito dopo $3_{sec}$ dall'incessazione delle scoperte IPC (Timeout Convergenza).
+Si è provveduto allo sfoggio del binario, compilato per iterazioni continue ed abortito dopo $3\_{sec}$ dall'incessazione delle scoperte IPC (Timeout Convergenza).
 
 \begin{terminal}[Mutua Esclusione Distribuita - Output]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho17$ ./bellman_ford 
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho17$ ./bellman\_ford 
 ===== Bellman-Ford Algoritmo di Distance Vector Distribuito =====
 Obiettivo: Cammini ottimali da ogni Nodo verso il NODO TARGET (0)
 

@@ -33,7 +33,7 @@
 ]{hyperref}
 
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
+\graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.geometric}
 \usepackage{listings}
@@ -177,7 +177,7 @@ L'Hands-On 10 (HO10) affronta la formalizzazione matematica e l'implementazione 
 \section{Stato dell'Arte}
 La progettazione di algoritmi paralleli si basa su criteri formali di indipendenza e limiti teorici di scalabilità.
 \begin{itemize}
-    \item \textbf{Condizioni di Bernstein}: Due task $T_1$ e $T_2$ possono essere eseguiti in parallelo se l'insieme di lettura di uno non interseca l'insieme di scrittura dell'altro, e i loro insiemi di scrittura sono disgiunti.
+    \item \textbf{Condizioni di Bernstein}: Due task $T\_1$ e $T\_2$ possono essere eseguiti in parallelo se l'insieme di lettura di uno non interseca l'insieme di scrittura dell'altro, e i loro insiemi di scrittura sono disgiunti.
     \item \textbf{Legge di Amdahl}: Il miglioramento prestazionale di un programma tramite la parallelizzazione è limitato dalla frazione di codice che deve necessariamente essere eseguita in modo sequenziale.
     \item \textbf{Python GIL (Global Interpreter Lock)}: A differenza del C, dove i thread scalano linearmente sui core, Python introduce un lock globale che impedisce il vero parallelismo multi-core per task CPU-bound, rendendo il threading utile principalmente per l'I/O asincrono.
 \end{itemize}
@@ -186,22 +186,22 @@ La progettazione di algoritmi paralleli si basa su criteri formali di indipenden
 L'approccio prevede la mappatura dell'equazione su un grafo orientato aciclico (DAG).
 
 \subsection{Analisi del Grafo (DAG)}
-L'espressione viene scomposta in tre livelli di esecuzione ($L_0, L_1, L_2$):
+L'espressione viene scomposta in tre livelli di esecuzione ($L\_0, L\_1, L\_2$):
 \begin{itemize}
-    \item \textbf{Tasks Indipendenti ($L_0$)}: $A=2*6$, $B=1+4$, $C=5-2$.
-    \item \textbf{Tasks Dipendenti ($L_1$)}: $D=B*C$ (Richiede il completamento di B e C).
-    \item \textbf{Risultato Finale ($L_2$)}: $y=A+D$.
+    \item \textbf{Tasks Indipendenti ($L\_0$)}: $A=2*6$, $B=1+4$, $C=5-2$.
+    \item \textbf{Tasks Dipendenti ($L\_1$)}: $D=B*C$ (Richiede il completamento di B e C).
+    \item \textbf{Risultato Finale ($L\_2$)}: $y=A+D$.
 \end{itemize}
 
 \subsection{Sincronizzazione in C}
-Viene utilizzata la libreria \texttt{pthread} per gestire il ciclo di vita dei task. Il recupero dei valori avviene tramite il casting del puntatore di ritorno nella \texttt{pthread_join}.
+Viene utilizzata la libreria \texttt{pthread} per gestire il ciclo di vita dei task. Il recupero dei valori avviene tramite il casting del puntatore di ritorno nella \texttt{pthread\_join}.
 \begin{ccode}[Snippet Sincronizzazione Livelli]
-pthread_create(&tA, NULL, task_A, NULL);
-pthread_create(&tB, NULL, task_B, NULL);
-pthread_create(&tC, NULL, task_C, NULL);
+pthread\_create(&tA, NULL, task\_A, NULL);
+pthread\_create(&tB, NULL, task\_B, NULL);
+pthread\_create(&tC, NULL, task\_C, NULL);
 // Barriera di sincronizzazione manuale
-pthread_join(tB, (void**)&resB);
-pthread_join(tC, (void**)&resC);
+pthread\_join(tB, (void**)&resB);
+pthread\_join(tC, (void**)&resC);
 // Ora posso lanciare il task D (Livello 1)
 \end{ccode}
 
@@ -209,7 +209,7 @@ pthread_join(tC, (void**)&resC);
 \subsection{Istruzioni di Esecuzione}
 Compilazione del risolutore di grafi:
 \begin{terminal}[Build]
-$ gcc graph_solver.c -o solver
+$ gcc graph\_solver.c -o solver
 \end{terminal}
 
 \section{Risultati}
@@ -219,7 +219,7 @@ La validazione è stata condotta verificando l'integrità del calcolo e l'ordine
 Entrambe le implementazioni (C e Python) hanno restituito con successo il valore atteso $y = 27$. I log di sistema confermano che il thread responsabile dell'operazione $y = A + D$ è rimasto in stato di \textit{waiting} finché i predecessori non hanno rilasciato le risorse.
 
 \subsection{Confronto Prestazionale}
-L'ispezione con \texttt{htop} ha mostrato un utilizzo bilanciato di 3 core durante la fase $L_0$ in C, mentre in Python l'overhead del context switching per il GIL ha limitato l'efficienza computazionale effettiva.
+L'ispezione con \texttt{htop} ha mostrato un utilizzo bilanciato di 3 core durante la fase $L\_0$ in C, mentre in Python l'overhead del context switching per il GIL ha limitato l'efficienza computazionale effettiva.
 
 \section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 10 ha dimostrato che la scomposizione in grafi di precedenza è il metodo più rigoroso per strutturare la computazione parallela, garantendo la coerenza dei dati (\textit{data consistency}) in sistemi distribuiti.
