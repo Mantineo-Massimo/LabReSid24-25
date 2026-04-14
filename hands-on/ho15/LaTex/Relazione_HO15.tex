@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -171,7 +171,7 @@
 \tableofcontents
 \newpage
 
-\section{Introduzione al Problema}
+\section{Problem Statement}
 L'Hands-On 15 richiede la dismissione dei costrutti standard d'Ateneo tramite \texttt{Pthreads} o i classici Web Sockets TCP, allo scopo di studiare la comunicazione Inter-Processo locale di Linux (IPC) tramite le \textbf{Named Pipes} (conosciute come FIFO). L'applicazione designata è la programmazione distribuita di un algoritmo "Flooding", in cui viaggiano messaggi da un Iniziatore (Agente) all'insegna di vicini collegati direzionalmente su un grafo, finchè tutta la rete non è informata. A un nodo (\textit{Processo isolato generato da una Fork()}) e alle comunicazioni sui suoi archi fisici (\textit{Le FIFO in /tmp/}) dovranno asserragliarsi le funzioni \texttt{msg()} ed \texttt{stf()}.
 
 \section{Stato dell'Arte}
@@ -182,7 +182,7 @@ A livello concettuale, le IPC Pipelines vengono comunemente introdotte da Ritchi
     \item \textbf{Costrutti Formali}: L'algoritmo di Santoro identifica il Message Generator ed il valutatore interno (State Transition Function, \texttt{stf}).
 \end{itemize}
 
-\section{Metodologia usata}
+\section{Metodologia ed Implementazione}
 
 \subsection{Topologia ed Avvio}
 Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **Grafo a Diamante di 4 Nodi**: L'Agent 0 (Iniziatore) è connesso asimmetricamente ad {1, 2}. Gli Agent 1 e 2 si rivolgono entrambi al nodo di base {3}.
@@ -214,10 +214,10 @@ void stf(int id, int* state, int sender, const char* info) {
 }
 \end{ccode}
 
-\section{Risultati Sperimentali}
+\section{Risultati}
 Avviando la Routine, la stampa al terminale esalta coerentemente la logica asincrona dei 4 nodi isolati e del Flooding, in cui i Nodi 2 e 3 alla fine scartano i messaggi ritardatari pervenuto dell'altro braccio.
 
-\begin{terminal}
+\begin{terminal}[Simulazione Algoritmo di Flooding]
 massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho15$ ./flooding
 --- Avvio Algoritmo di Flooding Centralizzato ---
 Topologia: 4 Nodi a Diamante (0 Initiator)
@@ -241,7 +241,7 @@ Topologia: 4 Nodi a Diamante (0 Initiator)
 
 A fine esecuzione, il master rimuove ordinatamente dalle cartelle UNIX \texttt{/tmp/} la sequela di FIFO in disuso per mantenere il Filesystem esente da clutters.
 
-\section{Conclusione e Sviluppi Futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'algoritmo riproduce con precisione estrema un albero decisionale DFS-like senza attese esterne se non quelle bloccanti native delle pipe POSIX.
 
 \noindent \textbf{Sviluppi futuri ideali:}

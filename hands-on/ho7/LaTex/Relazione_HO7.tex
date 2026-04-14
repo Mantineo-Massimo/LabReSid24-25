@@ -57,7 +57,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -209,7 +209,7 @@ L'ispezione della cattura (Figura 7) evidenzia graficamente l'impatto dei vincol
 \subsection{Benchmark Prestazionali}
 I test con \texttt{iperf} hanno mostrato un throughput stabile a 75 Mbps (sotto il limite di 100 Mbps a causa dell'overhead del protocollo e del ritardo elevato che influenza la finestra di congestione TCP), validando la fedeltà del modello TCLink.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'esperienza con Mininet ha dimostrato come la virtualizzazione permetta di testare architetture di rete complesse con costi nulli. L'integrazione tra script Python e kernel Linux rende SDN uno strumento potente per la prototipazione rapida.
 
 \noindent \textbf{Sviluppi futuri:}

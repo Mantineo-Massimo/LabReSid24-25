@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -171,11 +171,11 @@
 \tableofcontents
 \newpage
 
-\section{Introduzione al Problema}
+\section{Problem Statement}
 L'obiettivo di quest'esperienza risiede nella necessità di gestire dinamicamente network anonimi (o semi-anonimi) allo scopo di individuare tra N Nodi di eguale importanza colui che andrà ad assumere le vesti di \textbf{Leader del Grafo}.
 Come mezzo di propagazione dei pacchetti manteniamo l'ambiente POSIX asincrono testato per l'Hands-On 15: un File System su cui vengono mappati pseudo-device esposti tramite la Syscall \texttt{mkfifo}. Questa architettura consente di avere N Processi totalmente isolati in RAM (nessuna locazione globale in comune) che concorrono all'elezione passandosi Stringhe lungo l'anello delle pipe.
 
-\section{Stato dell'Arte e Disamina Teorica}
+\section{Stato dell'Arte}
 Abbiamo implementato ben due varianti protocollari, in base alle informazioni di topologia:
 
 \subsection{Algoritmo FloodMax (Grafo generico)}
@@ -196,7 +196,7 @@ Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti dispost
     \item \textbf{Se UID Entrante == Mio}: Sono IL LEADER eletto senza ombra di dubbio!
 \end{itemize}
 
-\section{Metodologia Applicata}
+\section{Metodologia ed Implementazione}
 
 Nel codice nativo in linguaggio C, \texttt{lcr.c} genera 5 FIFO Unidirezionali ($0 \rightarrow 1, 1 \rightarrow 2, \dots$) avvalendosi di \texttt{fork} per istanziare i componenti. Inoltre inserisce dinamicamente una riga di codice in sospensiva \texttt{sleep(1)} dopo la conversione \texttt{sscanf} interna al ciclo d'ascolto per facilitare l'occhio umano alla visualizzazione dell'elezione real-time.
 
@@ -213,11 +213,11 @@ if (recv_uid > my_uid) {
 }
 \end{ccode}
 
-\section{Risultati Sperimentali}
+\section{Risultati}
 Invocando la compilazione nativa globale `make all`, le prove emettono outputs teoricamente accurati.
 
 \subsection{Output FloodMax \textit{(UID Vincente Test = 50)}}
-\begin{terminal}
+\begin{terminal}[Algoritmo di Elezione LCR - Risultati]
 --- FloodMax Algorithm (Generic Graph diam=2) ---
 
 [NODO 0] ROUND 1: Mio Max= 10. Invio ai vicini...
@@ -236,7 +236,7 @@ Invocando la compilazione nativa globale `make all`, le prove emettono outputs t
 Risultato garantito nei tempi stabiliti: due round netti per eleggere correttamente l'agente detentore della chiave d'ordine massimale `UID 50`.
 
 \subsection{Output LCR \textit{(UID Vincente Test = 23)}}
-\begin{terminal}
+\begin{terminal}[Algoritmo di Elezione Bully - Risultati]
 --- LCR Algorithm (Ring of 5 Nodes) ---
 
 [NODO 0 - UID 12] Inizia. Invia 'UID:12' a Nodo 1
@@ -263,7 +263,7 @@ Risultato garantito nei tempi stabiliti: due round netti per eleggere correttame
 \end{terminal}
 La chiusura a scarto è immacolata. L'UID asintoticamente più elevato era noto fin dall'inizio all'occhio clinico umano, ed una singola passata circolare è bastata allo script per terminare trionfante spezzando il Ring e ripulendo i file allocati in memoria virtuale temporanea.
 
-\section{Conclusione}
+\section{Conclusioni e Sviluppi Futuri}
 Gli algoritmi studiati si applicano egregiamente all'emulazione IPC di Linux. Seppur originati nella teoria delle Reti Geografiche Distribuite a Commutazione di Pacchetto, si applicano identicamente a microstrutture informatiche parallele interne ad una CPU su ambienti Cloud.
 
 \end{document}

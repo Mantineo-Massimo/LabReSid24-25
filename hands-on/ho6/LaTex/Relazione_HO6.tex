@@ -57,7 +57,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -175,10 +175,10 @@
 \tableofcontents
 \newpage
 
-\section{Obiettivo dell'Esercitazione}
+\section{Problem Statement}
 L'obiettivo della sesta esercitazione (Hands-On 6) è lo sviluppo di un client UDP multicast in linguaggio C. Il client deve potersi unire a un gruppo multicast al fine di ricevere i messaggi del server fornito dal Docente (\texttt{multicast\_server.c}). Viene richiesto inoltre che sia possibile lanciare molteplici istanze del client in parallelo per ricevere i messaggi simultaneamente.
 
-\section{Analisi Tecnica: il Multicast UDP}
+\section{Stato dell'Arte}
 La comunicazione multicast è di tipo uno-a-molti: un host invia un messaggio una singola volta e la rete, utilizzando protocolli come all'IGMP (Internet Group Management Protocol), si assicura di replicarlo e recapitarlo a tutti gli host iscritti.
 
 A livello di sistema (socket API), la gestione del multicast avviene tramite una serie di direttive con cui il processo informa il kernel della propria volontà di inoltrare la sottoscrizione al gruppo. Le procedure implementate sono le seguenti:
@@ -188,7 +188,7 @@ A livello di sistema (socket API), la gestione del multicast avviene tramite una
     \item \textbf{IP\_ADD\_MEMBERSHIP}: Direttiva tramite cui il socket comunica l'intenzione di aggregarsi ad uno specifico indirizzo IP multicast.
 \end{itemize}
 
-\section{Implementazione del Client (\texttt{multicast\_client.c})}
+\section{Metodologia ed Implementazione}
 
 Il codice sorgente per il multicast si basa su due strutture principali e sull'uso mirato di \texttt{setsockopt()}.
 
@@ -235,7 +235,7 @@ while (1) {
 setsockopt(sockfd, IPPROTO_IP, IP_DROP_MEMBERSHIP, &multicast_req, sizeof(multicast_req));
 \end{ccode}
 
-\section{Esecuzione e Validazione}
+\section{Risultati}
 Per validare il comportamento del software, sono stati testati esecutivamente due processi client separati ed un unico mittente (il server multicast) sulla medesima subnet.
 
 \subsection{Istanziare molteplici Client}
@@ -268,7 +268,17 @@ Ricevuto: Hello, Multicast! | (Da: 127.0.0.1:46155)
 
 Entrambi i socket UDP sono stati abilitati alla convivenza sullo stesso port listening e intercettano con precisione i messaggi mandati in overlay sull'IP appartenente al gruppo di classe D.
 
-\section{Conclusioni}
+\subsection{Analisi Wireshark}
+L'analisi del traffico tramite Wireshark (Figura \ref{fig:wireshark_multicast}) conferma il corretto inoltro dei pacchetti UDP verso l'indirizzo di classe D \texttt{239.0.0.1}. Si osserva come un singolo pacchetto inviato dal server venga ricevuto da tutti i client iscritti al gruppo, minimizzando il carico di rete rispetto ad una comunicazione unicast multipla.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{ho6/wireshark_multicast.png}
+    \caption{Cattura Wireshark: Flusso Multicast UDP verso 239.0.0.1}
+    \label{fig:wireshark_multicast}
+\end{figure}
+
+\section{Conclusioni e Sviluppi Futuri}
 Durante l'Hands-On 6 è stato analizzato l'assetto implementativo richiesto per abilitare flussi uno-a-molti nelle architetture basate su datagrammi in linguaggio C, superando in modo efficace i vincoli stringenti dettati dall'API standard ed approfondendo i benefici dell'opzione estesa SO\_REUSEADDR e l'invio degli intent IGMP via syscall.
 
 \end{document}

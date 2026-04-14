@@ -57,7 +57,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -224,7 +224,7 @@ Ricevuta risposta: seq=1, TTL=117, bytes=64
 \subsection{Analisi Wireshark}
 L'ispezione della cattura (Figura 5) conferma che il payload personalizzato 'AAAA' (\texttt{0x41}) è stato correttamente incapsulato e restituito dal server remoto, validando la funzione di checksum.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 5 ha permesso di comprendere l'anatomia dei protocolli di controllo e il potere derivante dall'accesso diretto al network stack tramite socket raw. Questa competenza è la base per lo sviluppo di tool di scansione e monitoraggio professionale.
 
 \noindent \textbf{Sviluppi futuri:}

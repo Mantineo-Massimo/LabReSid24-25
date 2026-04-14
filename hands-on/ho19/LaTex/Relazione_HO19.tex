@@ -1,64 +1,184 @@
 \documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{geometry}
-\geometry{a4paper, margin=1in}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+% Impostazione dei margini con geometry
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={Federated Learning con Ray.io e PyTorch},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 19},
+]{hyperref}
+
 \usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
 \usepackage{fancyhdr}
-\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
 
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+% Impostazione di fancyhdr per header e footer
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{Massimo Mantineo}
-\fancyhead[C]{Hands-On 19}
-\fancyhead[R]{A.A. 2024/2025}
-\fancyfoot[C]{\thepage}
 
-\title{Relazione Hands-On 19: Federated Learning con Ray.io e PyTorch}
-\author{Massimo Mantineo (Matricola: 541924)}
-\date{Aprile 2026}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
 }
-\lstset{style=mystyle}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 19
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Relazione: Federated Learning con Ray.io e PyTorch\\
+\large (Hands-On 19)}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
 
 \begin{document}
 
-\maketitle
+% Pagina di copertina
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 19:}\\
+    Federated Learning con Ray.io e PyTorch\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
 \tableofcontents
 \newpage
 
-\section{Introduzione}
+\section{Problem Statement}
 L'obiettivo di questo Hands-On è l'implementazione di un sistema di \textbf{Federated Learning (FL)} per la classificazione di immagini del dataset MNIST. A differenza del paradigma tradizionale centralizzato, il Federated Learning permette di addestrare modelli di Machine Learning su dati distribuiti, mantenendo la privacy dei dati locali. 
 
 In questo esperimento, abbiamo utilizzato \textbf{Ray.io} come framework di orchestrazione distribuita e \textbf{PyTorch} per la definizione e l'addestramento del modello neurale.
 
-\section{Stato dell'Arte e Teoria}
+\section{Stato dell'Arte}
 Il Federated Learning si basa sul concetto di portare il calcolo dai dati, invece dei dati al calcolo. Il processo tipico prevede:
 \begin{enumerate}
     \item Un'entità centrale (\textbf{Aggregator}) che invia i pesi del modello globale ai partecipanti.
@@ -73,7 +193,7 @@ L'algoritmo FedAvg calcola la media pesata dei parametri del modello:
 \end{equation}
 dove $n_k$ è il numero di esempi del worker $k$ e $n$ il totale degli esempi.
 
-\section{Metodologia e Implementazione}
+\section{Metodologia ed Implementazione}
 Il sistema è stato implementato con 1 Aggregator e 6 Worker distribuiti come \textbf{Ray Actors}.
 
 \subsection{Partizionamento dei Dati}
@@ -85,10 +205,10 @@ Le 60.000 immagini del set di training di MNIST sono state suddivise in modo cas
     \item \textbf{FederatedAggregator}: Coordina i round di comunicazione, esegue l'aggregazione FedAvg e valuta il modello globale su un set di test centrale (10.000 immagini).
 \end{itemize}
 
-\section{Risultati Sperimentali}
+\section{Risultati}
 Il sistema è stato testato per 3 round di comunicazione. I log mostrano un rapido incremento dell'accuratezza globale:
 
-\begin{verbatim}
+\begin{terminal}[Log Addestramento Federato]
 >>> Initializing Federated Learning with 6 workers...
 >>> Round 1 starting...
 Round 1 - Global Test Accuracy: 92.48%
@@ -97,11 +217,11 @@ Round 2 - Global Test Accuracy: 95.21%
 >>> Round 3 starting...
 Round 3 - Global Test Accuracy: 96.16%
 Training finished.
-\end{verbatim}
+\end{terminal}
 
 L'accuratezza finale del \textbf{96.16\%} ottenuta in soli 3 round dimostra l'efficacia dell'approccio federato nella convergenza del modello MLP.
 
-\section{Conclusioni}
+\section{Conclusioni e Sviluppi Futuri}
 L'implementazione ha dimostrato come Ray.io semplifichi drasticamente la gestione di attori distribuiti per compiti di intelligenza artificiale. Il Federated Learning si è rivelato un metodo robusto per l'addestramento distribuito, riuscendo a mantenere prestazioni paragonabili alla versione centralizzata pur mantenendo i dati frammentati su worker indipendenti.
 
 \end{document}

@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -222,7 +222,7 @@ if (count == N) {
 Le compilazioni e le catture da log sul terminale attestano il soddisfacimento dei vincoli imposti al design.
 
 \subsection{Output Simulazione Join}
-\begin{terminal}
+\begin{terminal}[System V Message Queues - Risultati]
 massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho13$ ./ex1_join
 Padre: Creo il thread figlio.
 Padre: In attesa della terminazione del figlio...
@@ -233,7 +233,7 @@ Padre: Il figlio ha confermato la terminazione (Join simulato con successo).
 La dimostrazione concreta che il Thread chiamante non incorre ad uscita forzata nonostante la mancanza di una vera \texttt{pthread\_join}. Questo garantisce lo shutdown dolce.
 
 \subsection{Output Barriera a Variabile Condizionale}
-\begin{terminal}
+\begin{terminal}[POSIX Message Queues - Risultati]
 Thread 0: Arrivato alla barriera. (Presenti: 1/4)
 Thread 1: Arrivato alla barriera. (Presenti: 2/4)
 Thread 2: Arrivato alla barriera. (Presenti: 3/4)

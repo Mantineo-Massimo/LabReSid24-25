@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -171,7 +171,7 @@
 \tableofcontents
 \newpage
 
-\section{Introduzione al Problema}
+\section{Problem Statement}
 Il MidTerm (Hands-On 14) riunisce ed eleva le competenze acquisite operando finora con i Socket Berckley e con le astrazioni della libreria \texttt{Pthreads}. La richiesta principale è l'implementazione in linguaggio C di un \textbf{Sistema Bancario} minimale, in grado di gestire un correntista che invia comandi CRUD asincroni da molteplici istanti d'accesso (Terminali differenti, App, E-banking sportello).
 Il sistema si fonda su un'architettura **Client-Server TCP** e prevede limitatori rigorosi per la concorrenza (10 Threads), più protezioni di memoria contro la \textit{Race Condition} che andrebbe a distruggere la congruenza dell'estratto conto.
 
@@ -183,7 +183,7 @@ Architetture come quella proposta si pongono alla base dei moderni layer di acce
     \item \textbf{Critical Section}: Le operazioni di bilanciamento conto (Lettura-Modifica-Scrittura) non sono atomiche ai cicli di clock. Il DB (simulato) sarà interamente protetto tramite il costrutto \texttt{pthread\_mutex\_t}.
 \end{itemize}
 
-\section{Metodologia usata}
+\section{Metodologia ed Implementazione}
 
 \subsection{Progettazione del Database}
 La struttura \texttt{Transaction} immagazzina l'ID, la causale e l'importo. Un array \texttt{db[MAX\_RECORDS]} simula la tabella centrale di archiviazione in backend. La discriminante principale è lo stato logico di esistenza.
@@ -206,9 +206,9 @@ client_sock = accept(server_sock, ...);
 \end{ccode}
 Ogniqualvolta una richiesta accede al DB, acquisisce un \texttt{pthread\_mutex\_lock(\&db\_lock)}. Se è un inserzione (\texttt{ADD}), scansiona i duplicati di ID per prevenire collisioni logiche. Lo stream testuale inviato dai socket viene parsate comodamente tramite \texttt{sscanf}.
 
-\section{Risultati Sperimentali}
+\section{Risultati}
 Innescando il demone server ed aprendo il client tramite l'eseguibile \texttt{./client}, la suite risponde correttamente con l'estratto CRUD implementato:
-\begin{terminal}
+\begin{terminal}[Esecuzione Client e Server RPC]
 massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho14$ ./client
 --- Connected to Bank Server ---
 Available commands:
@@ -253,7 +253,7 @@ Come richiesto dal tracciato teorico, si osservano chiaramente le tre iterazioni
 3. Lo smantellamento concordato alla pressione del \texttt{QUIT} pilotato dal flag \texttt{[FIN, ACK]}.
 
 
-\section{Conclusione e Sviluppi Futuri}
+\section{Conclusioni e Sviluppi Futuri}
 A un livello di Proof-Of-Concept, la gestione è completamente coerente: non permette transazioni duplici, non permette cancellazioni inesatte e parallelizza correttamente client multipli.
 
 \noindent \textbf{Sviluppi futuri ideali:}

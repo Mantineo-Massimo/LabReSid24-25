@@ -4,7 +4,7 @@
 ![Codice](https://img.shields.io/badge/Linguaggio-C%20%2F%20Python-green)
 ![Stato](https://img.shields.io/badge/Stato-Completato-brightgreen)
 
-Benvenuto nel repository ufficiale del corso di **Laboratorio di Reti e Sistemi Distribuiti**, anno accademico 2024/2025. Questo repository raccoglie 19 esercitazioni (Hands-On) che coprono l'intero spettro della programmazione di rete, dai socket di basso livello fino ai sistemi distribuiti e al machine learning federato.
+Repository del corso di **Laboratorio di Reti e Sistemi Distribuiti** con gli Hands-On svolti da **Massimo Mantineo - 541924**, a.a. 2024/2025. Questo repository raccoglie 19 esercitazioni (Hands-On) che coprono l'intero spettro della programmazione di rete, dai socket di basso livello fino ai sistemi distribuiti e al machine learning federato.
 
 ## 👨‍💻 Autore
 *   **Nome:** Massimo Mantineo

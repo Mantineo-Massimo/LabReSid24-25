@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -171,10 +171,10 @@
 \tableofcontents
 \newpage
 
-\section{Introduzione}
+\section{Problem Statement}
 Nell'ambito dell'astrazione logica di nodi di rete come processi UNIX, si richiede l'implementazione del celebre algoritmo matematico di \textbf{Bellman-Ford} per il monitoraggio dei grafi pesati. Si tratta dell'archetipo fondante per la classe di protocolli \textit{Distance-Vector} usati dai router fisici per eleggere la minima distanza hop-by-hop verso una sottorete (Si veda, ad esempio, lo standard `RIP` o `EIGRP`). Ancora una volta l'elaborazione non sarà accentrata su un database monolitico for-loop classico, ma si propagherà in maniera genuinamente \textbf{Distribuita ed Asincrona} sfruttando \texttt{fork} ed appoggiandosi alle Syscall \texttt{mkfifo} per le code di messaggistica.
 
-\section{Costrutto Logico-Matematico}
+\section{Stato dell'Arte}
 L'algoritmo di Bellman-Ford assicura, in reti prive di cicli a costo negativo, la convergenza totale dei pesi. 
 Esso si esprime tramite l'assioma di calcolo iterativo:
 \begin{equation}
@@ -188,7 +188,7 @@ Dove:
 
 Ogni nodo \textit{riceve} in asincrono messaggi in buffer dalla propria FIFO, decodifica il Vettore $D(v,y)$ ricevuto, somma all'overhead biologico $c(x,v)$ che esso prova per raggiungere $v$, e decreta se il cammino calcolato è più economico di quello che custodiva in memoria, mutando ed allertando i vicini di rimando in caso di Update positivo.
 
-\section{Metodologia Appiedata}
+\section{Metodologia ed Implementazione}
 
 Siccome il grafo visivo manca all'appello, optiamo per disporre una trincea a \textbf{Cost Matrix Asimmetrica} per 4 Nodi:
 \begin{ccode}
@@ -203,10 +203,10 @@ int cost_matrix[NUM_NODES][NUM_NODES] = {
 \end{ccode}
 Abbiamo programmato volontariamente un trabocchetto: benché esista l'arco diretto Nodo 2 $\rightarrow$ Target 0 al costo di asticella `5`, la somma dei pesi passando attivamente per Nodo 1 costa solamente `3` ($1+2$). Costringiamo così in maniera fittizia l'algoritmo a ricalcolare le metriche ignorando l'arco apparentemente più palese (Il nodo 3 dista `1` dal 2, per un totale di `4`, ed in quanto esso dista `4` dal Nodo 1 che aggiunge il fatidico `2`, la via più ovvia peserebbe `6`. Viene scelto `4`).
 
-\section{Risultati Sperimentali e Transcodifica}
+\section{Risultati}
 Si è provveduto allo sfoggio del binario, compilato per iterazioni continue ed abortito dopo $3_{sec}$ dall'incessazione delle scoperte IPC (Timeout Convergenza).
 
-\begin{terminal}
+\begin{terminal}[Mutua Esclusione Distribuita - Output]
 massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho17$ ./bellman_ford 
 ===== Bellman-Ford Algoritmo di Distance Vector Distribuito =====
 Obiettivo: Cammini ottimali da ogni Nodo verso il NODO TARGET (0)
@@ -226,7 +226,7 @@ Obiettivo: Cammini ottimali da ogni Nodo verso il NODO TARGET (0)
 ==== Convergenza Assoluta Raggiunta. Discesa IPC ====
 \end{terminal}
 
-\section{Conclusioni}
+\section{Conclusioni e Sviluppi Futuri}
 La traccia IPC e i log confermano clamorosamente le nostre predisposizioni da scrivania. All'insorgere del tempo e con l'avanzamento dei cicli, il **NODO 2 e il NODO 3 scartano le rotte precedenti (5 e 6 rispettivamente)** per abbracciare l'Update di vettori asincrono che segnalava la presenza del percorso a costo calcolato `3` e `4`, dimostrando ad amplifero la correttezza del demone C. Le sysfile temporanee di buffer (Pipe multiple) vengono annibillate dolcemente dallo sterrato in chiusura dell'ambiente Unix locale.
 
 \end{document}

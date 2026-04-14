@@ -1,58 +1,179 @@
 \documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{geometry}
-\geometry{a4paper, margin=1in}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+% Impostazione dei margini con geometry
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={MapReduce Distribuito con Ray.io},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 18},
+]{hyperref}
+
 \usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
 \usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
 
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+% Impostazione di fancyhdr per header e footer
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{Massimo Mantineo}
-\fancyhead[C]{Hands-On 18}
-\fancyhead[R]{A.A. 2024/2025}
-\fancyfoot[C]{\thepage}
 
-\title{Relazione Hands-On 18: MapReduce Distribuito con Ray.io}
-\author{Massimo Mantineo (Matricola: 541924)}
-\date{Aprile 2026}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
 }
-\lstset{style=mystyle}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 18
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Relazione: MapReduce Distribuito con Ray.io\\
+\large (Hands-On 18)}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
 
 \begin{document}
 
-\maketitle
+% Pagina di copertina
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 18:}\\
+    MapReduce Distribuito con Ray.io\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
 \tableofcontents
 \newpage
 
-\section{Introduzione}
+\section{Problem Statement}
 L'Hands-On 18 affronta lo studio e l'implementazione di un sistema di calcolo distribuito basato sul paradigma \textbf{MapReduce}. A differenza degli esercizi precedenti svolti in C e focalizzati sulla comunicazione inter-processo a basso livello o socket, questo esperimento utilizza \textbf{Python} e il framework \textbf{Ray.io} per gestire la parallelizzazione e la distribuzione dei task su cluster (reali o virtuali).
 
 L'obiettivo specifico è il conteggio delle frequenze dei termini presenti nel testo del celebre romanzo \textit{"Il Signore degli Anelli"}, analizzando come i task vengono suddivisi, eseguiti in parallelo e infine aggregati.
@@ -66,7 +187,7 @@ Il paradigma MapReduce, reso celebre da Google, si basa su due fasi principali:
 
 Framework moderni come \textbf{Ray} permettono di implementare tali pattern in modo efficiente, offrendo astrazioni semplici per l'esecuzione remota di funzioni e la gestione delle dipendenze, superando i limiti della libreria standard multiprocess di Python.
 
-\section{Metodologia e Implementazione}
+\section{Metodologia ed Implementazione}
 L'architettura del sistema prevede:
 \begin{enumerate}
     \item \textbf{Splitting}: Il testo di input (\texttt{lotr.txt}) viene suddiviso in $N$ blocchi.
@@ -76,10 +197,10 @@ L'architettura del sistema prevede:
 
 Il codice principale è contenuto in \texttt{mapreduce\_lotr.py}.
 
-\section{Risultati Sperimentali}
+\section{Risultati}
 L'esecuzione sul testo completo del romanzo ("The Lord of the Rings") ha prodotto i seguenti risultati (Top 10 parole per frequenza):
 
-\begin{verbatim}
+\begin{terminal}[Output MapReduce Distribuito]
 Starting distributed MapReduce on lotr.txt...
 Report generated: lotr_report.txt
 Top 10 words:
@@ -93,7 +214,7 @@ Top 10 words:
   i: 2825
   it: 2780
   that: 2539
-\end{verbatim}
+\end{terminal}
 
 I risultati mostrano la tipica distribuzione delle lingue naturali, dove articoli e congiunzioni dominano il conteggio. La distribuzione tramite Ray è avvenuta correttamente, inizializzando un cluster locale sulla macchina di test e completando l'analisi di migliaia di parole in pochi secondi.
 

@@ -57,7 +57,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -224,7 +224,7 @@ Received: 1 from socket 5 -> ACK_FIB_OK (Gestione Parallela)
 \subsection{Analisi Wireshark}
 L'analisi del traffico conferma che nel modello bloccante un secondo client rimane in attesa (nonostante l'handshake kernel sia avvenuto) finché il primo non chiude la sessione. Nel modello non-bloccante, i pacchetti \texttt{PSH, ACK} di diversi client risultano mescolati cronologicamente, dimostrando il successo del multiplexing.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 2 ha dimostrato che il multiplexing dell'I/O è essenziale per la creazione di server reattivi. La gestione manuale degli stati dei client (\textit{state machines}) è un compromesso necessario per ottenere prestazioni elevate in un singolo thread.
 
 \noindent \textbf{Sviluppi futuri:}

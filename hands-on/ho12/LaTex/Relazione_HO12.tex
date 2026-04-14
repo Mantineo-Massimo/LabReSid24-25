@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -217,7 +217,7 @@ sem_post(&empty_slots);  // Converte il "pieno" appena letto in "vuoto"
 L'esecuzione del codice ha fornito log testuali perfetti di dimostrazione del comportamento atteso.
 
 \subsection{Output Barriera}
-\begin{terminal}
+\begin{terminal}[Output di Esecuzione - Memoria Condivisa]
 massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho12$ ./ex1_barrier
 Thread 1: Arrivato alla barriera (2/5).
 Thread 2: Arrivato alla barriera (3/5).
@@ -231,7 +231,7 @@ Thread 1: Ha superato la barriera e sta eseguendo il suo compito!
 Si osserva come i thread si incodino rimanendo freezati fino a quando la stampa \textit{"E' l'ultimo!"} del Thread 4 fa scattare esecuzioni libere contemporanee per tutti.
 
 \subsection{Output Produttore-Consumatore}
-\begin{terminal}
+\begin{terminal}[Sincronizzazione tramite Semafori]
 Produttore 1: [PRODOTTO] -> 109 in pos 4
 Consumatore 1: [CONSUMATO] <- 105 in pos 0
 ...

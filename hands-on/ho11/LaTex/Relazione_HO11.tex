@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -255,7 +255,7 @@ Thread 2 has ENTERED the critical section.
 \end{terminal}
 Solo all'uscita delle coppie 0-1 scatta lo sblocco in grado di far defluire il Thread 2 rimasto bloccato in attesa sul Semaforo.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 11 offre la prova empirica definitiva che lo scambio di memoria in ambito multithreading non può mai assumere la connotazione dell'idempotenza se non attraverso un sistema regolamentato di Mutex, Monitor o Semafori. Si è osservato come l'implementazione pratica del Mutex garantisca sicurezza, sacrificando inevitabilmente il parallelismo perfetto nel punto interessato.
 
 \noindent \textbf{Sviluppi futuri:}

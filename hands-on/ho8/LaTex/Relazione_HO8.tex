@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -211,7 +211,7 @@ Tramite il comando \texttt{ps -eLo pid,tid,psr}, è stato verificato che il thre
 \subsection{Vantaggi Prestazionali}
 I test hanno confermato che forzare l'affinità riduce la varianza dei tempi di esecuzione (\textit{jitter}), rendendo il sistema più prevedibile per carichi di calcolo intensivo.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 8 ha evidenziato come la vicinanza tra software e hardware sia determinante per le prestazioni. Il controllo dell'affinità trasforma lo scheduler da una "black box" a uno strumento deterministico.
 
 \noindent \textbf{Sviluppi futuri:}

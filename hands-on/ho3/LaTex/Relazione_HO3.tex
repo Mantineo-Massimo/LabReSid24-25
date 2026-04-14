@@ -57,7 +57,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -217,7 +217,7 @@ L'ispezione dei pacchetti (Figura~\ref{fig:ho3_multiplexing}) mostra come il ser
 \subsection{Osservazione sui Descrittori}
 L'analisi dei log evidenzia come i file descriptor vengano riutilizzati efficientemente dal kernel una volta chiusi, mantenendo basso l'indice dell'array monitorato dalla \texttt{select()}.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 3 ha confermato che il multiplexing è una soluzione robusta per server con numero di client moderato. L'approccio a singolo thread semplifica la gestione della memoria condivisa, eliminando la necessità di primitive di sincronizzazione (mutex).
 
 \noindent \textbf{Sviluppi futuri:}

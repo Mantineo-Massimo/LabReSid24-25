@@ -56,7 +56,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -212,7 +212,7 @@ L'analisi tramite \texttt{size} ha dimostrato che le variabili globali non inizi
 \subsection{Effetto della Keyword \texttt{static}}
 È stato verificato che prefiggendo \texttt{static} a una variabile globale, il suo simbolo muta da globale (\texttt{D/B}) a locale (\texttt{d/b}), rendendola invisibile al linker e proteggendo l'incapsulamento del modulo.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 9 ha chiarito i passaggi fondamentali della generazione del software. La comprensione della tabella dei simboli è essenziale per il debugging di errori di tipo \textit{Multiple Definition} o \textit{Undefined Reference}.
 
 \noindent \textbf{Sviluppi futuri:}

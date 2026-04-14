@@ -58,7 +58,7 @@
     title=#1,
     fonttitle=\bfseries\sffamily,
     listing options={
-        language=bash,
+        language={},
         basicstyle=\ttfamily\small\color{green!80!white},
         backgroundcolor={},
         frame=none,
@@ -228,7 +228,7 @@ L'ispezione della cattura (Figura~\ref{fig:wireshark_epoll_multi}) evidenzia che
 \subsection{Performance Benchmark}
 I grafici prestazionali (Figura 4) mostrano che per carichi piccoli la differenza con la \texttt{select} è trascurabile, ma la stabilità del tempo di risposta conferma l'efficienza del meccanismo di notifica kernel-based.
 
-\section{Conclusioni e sviluppi futuri}
+\section{Conclusioni e Sviluppi Futuri}
 L'Hands-On 4 ha dimostrato la superiorità tecnologica di \texttt{epoll} per la creazione di servizi di rete moderni. La riduzione della copia dei dati tra user-space e kernel rende questa soluzione lo standard per architetture cloud ad alte prestazioni.
 
 \noindent \textbf{Sviluppi futuri:}
