@@ -213,6 +213,13 @@ struct icmphdr *icmp_reply = (struct icmphdr *)(recv_buffer + (ip_hdr->ihl * 4))
 \section{Risultati}
 La validazione è stata condotta interrogando il server DNS di Google (\texttt{8.8.8.8}) con privilegi di \texttt{root}.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{ho5/ho5_icmp_request.png}
+    \caption{Cattura pacchetti ICMP su Wireshark.}
+    \label{fig:icmp_capture}
+\end{figure}
+
 \subsection{Test di Raggiungibilità}
 Il programma ha riportato con successo la ricezione dell'Echo Reply (Tipo 0), confermando il corretto matching tra l'ID del processo e l'ID contenuto nel pacchetto di ritorno.
 \begin{terminal}[Output Ping Custom]

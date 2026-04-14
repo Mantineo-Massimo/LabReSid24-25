@@ -203,6 +203,20 @@ h1.setDefaultRoute('via 10.0.1.254')
 \section{Risultati}
 La validazione è stata effettuata tramite tool di misura (\texttt{ping}, \texttt{iperf}) e analisi dei protocolli.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ho7/ho7_wireshark_ex2.png}
+    \caption{Analisi traffico SDN in topologia router-based (Esercizio 2).}
+    \label{fig:sdn_router}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ho7/ho7_wireshark_ex3.png}
+    \caption{Verifica ritardi e banda con TC su link virtuale (Esercizio 3).}
+    \label{fig:sdn_links}
+\end{figure}
+
 \subsection{Analisi Wireshark}
 L'ispezione della cattura (Figura 7) evidenzia graficamente l'impatto dei vincoli: i tempi tra le richieste ARP e le relative risposte riflettono esattamente il delay configurato, confermando l'accuratezza della simulazione basata su \texttt{tc}.
 
