@@ -22,7 +22,7 @@
 \date{A.A. 2024/2025}
 \author{Massimo Mantineo}
 \institute{Università degli Studi di Messina\\Dipartimento MIFT}
-\titlegraphic{\hfill\includegraphics[height=1cm]{\detokenize{../../assets/logo_unime_orizontale.png}}}
+\titlegraphic{\hfill\includegraphics[height=1cm]{../../assets/logo_unime_orizontale.png}
 
 \begin{document}
 
@@ -35,15 +35,7 @@
 
 \section{Problem Statement}
 \begin{frame}{Il Problema: Concorrenza nel Settore Bancario}
-  \begin{itemize}
-    \item \textbf{Obiettivo}: Sviluppare un server bancario TCP affidabile in C.
-    \item \textbf{Sfida}: Gestire accessi contemporanei da molteplici sorgenti (App, Web, Terminale).
-    \item \textbf{Requisiti}:
-      \begin{itemize}
-        \item Consistenza dei dati (No doppie transazioni).
-        \item Alta disponibilità (Gestione multithread).
-        \item Integrità dell'estratto conto.
-      \end{itemize}
+  
   \end{itemize}
 \end{frame}
 
@@ -52,19 +44,11 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \textbf{Socket TCP/IP}
-      \begin{itemize}
-        \item Comunicazione affidabile.
-        \item Byte-stream interaction.
-        \item Garanzia di ordinamento.
-      \end{itemize}
+      
     \end{column}
     \begin{column}{0.5\textwidth}
       \textbf{POSIX Threads}
-      \begin{itemize}
-        \item Parallelismo reale.
-        \item Shared-memory model.
-        \item Sincronizzazione tramite Mutex.
-      \end{itemize}
+      
     \end{column}
   \end{columns}
 \end{frame}
@@ -99,11 +83,7 @@
         \draw[arrow, <->, unimeorange, very thick] (serv) -- node[above, font=\tiny, color=black] {Mutex Lock} (database);
     \end{tikzpicture}
     \vspace{0.3cm}
-    \begin{itemize}
-        \item \textbf{Main Thread}: Accetta connessioni (Dispatcher).
-        \item \textbf{Worker Threads}: Gestiscono le transazioni (CRUD).
-        \item \textbf{Sincronizzazione}: Mutex per la protezione del saldo.
-    \end{itemize}
+    
 \end{frame}
 
 \section{Risultati}
@@ -115,19 +95,12 @@
     \texttt{[Worker 3] Saldo precedente: 200\euro{} -> Nuovo: 150\euro{}}\\
     \texttt{[Worker 3] Transazione completata. Lock rilasciato.}
   \end{tcolorbox}
-  \begin{itemize}
-    \item Test di stress con 5 client simultanei riuscito.
-    \item Nessun errore di inconsisenza rilevato (\textit{Race-free execution}).
-  \end{itemize}
+  
 \end{frame}
 
 \section{Conclusioni}
 \begin{frame}{Sviluppi Futuri}
-  \begin{itemize}
-    \item \textbf{Persistenza}: Integrazione con SQLite o database SQL esterni.
-    \item \textbf{Sicurezza}: Implementazione di layer SSL/TLS tramite OpenSSL.
-    \item \textbf{Interfaccia}: Sviluppo di un front-end React per la gestione web.
-  \end{itemize}
+  
   \vspace{0.8cm}
   \centering
   \Large \textbf{Grazie per l'attenzione!}\\

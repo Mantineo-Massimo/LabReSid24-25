@@ -132,7 +132,7 @@
 \fancyhead[R]{%
   \parbox[b]{0.35\textwidth}{%
     \flushright
-    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \includegraphics[width=3.5cm]{logo_unime_orizontale.png}
     \vspace{15pt}
   }%
 }
@@ -150,7 +150,7 @@
     \thispagestyle{empty}
     \centering
     \vspace*{1cm}
-    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \includegraphics[width=6cm]{logo_unime_orizontale.png}\par\vspace{1cm}
     \vspace{2cm}
     {\Large \textbf{Università degli Studi di Messina}\par}
     {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
@@ -179,10 +179,7 @@ Lo scopo dell'esercitazione richiede la loro applicazione pratica lungo due scen
 
 \section{Stato dell'Arte}
 Le Variable Condition segnano un passaggio dai lock puramente "esclusivi" (Mutex) e limitativi (Semafori) ad una forma di cooperazione logica di alto livello.
-\begin{itemize}
-    \item \textbf{Condition Variable (\texttt{pthread\_cond\_t})}: Astrazione asincrona in C/POSIX che gestisce implicitamente una "Waiting room" (coda dei sospesi). A differenza dei semafori, queste variabili non possiedono una logica interiore (come un count numerico), motivo per il quale non possono **mai** esser utilizzate senza l'accoppiamento stretto, e rigoroso, con un \textit{Mutex} di riferimento per proteggere la booleana/stato del costrutto in memoria che decreta l'attesa.
-    \item \textbf{Wait e Signal}: \texttt{pthread\_cond\_wait} è in grado atomicamente di sbloccare il mutex ed entrare a basso pre-emption a fare nulla fin quando non viene scossa da remoto. Il "remote shacker" da un altro thread chiamerà la corrispondente \texttt{pthread\_cond\_signal}.
-\end{itemize}
+
 
 \section{Metodologia ed Implementazione}
 
@@ -207,17 +204,17 @@ Il meccanismo di attesa e segnalazione permette di coordinare l'esecuzione di du
 
         % Father states
         \draw[ultra thick, blue!70] (0,-0.5) -- (0,-1.5);
-        \node[left=0.1cm of (0,-1), font=\tiny] {Work};
+        \node[font=\tiny] at (0,-1) [left=0.1cm] {Work};
         
         \draw[ultra thick, orange!70] (0,-1.5) -- (0,-4.5);
-        \node[left=0.1cm of (0,-3), font=\tiny, color=orange!80!black] {WAITING (Sleeping)};
+        \node[font=\tiny, color=orange!80!black] at (0,-3) [left=0.1cm] {WAITING (Sleeping)};
         
         \draw[ultra thick, blue!70] (0,-4.5) -- (0,-5.5);
-        \node[left=0.1cm of (0,-5), font=\tiny] {Resume Work};
+        \node[font=\tiny] at (0,-5) [left=0.1cm] {Resume Work};
 
         % Child states
         \draw[ultra thick, green!70!black] (5,-1.5) -- (5,-4.5);
-        \node[right=0.1cm of (5,-3), font=\tiny] {Performing Task};
+        \node[font=\tiny] at (5,-3) [right=0.1cm] {Performing Task};
         
         % Signals
         \draw[arrow, red, dashed] (0,-1.5) -- node[above, font=\tiny, color=black] {pthread\_cond\_wait()} (5,-1.5);
@@ -232,18 +229,18 @@ Il meccanismo di attesa e segnalazione permette di coordinare l'esecuzione di du
 Questa tipologia di codice mima al 100\% la gestione in background dello scheduler per attendere flussi operativi prima di uscire in un \texttt{return 0;}.
 \begin{ccode}[Snippet Esercizio 1: Padre vs Figlio]
 // T-PADRE: Si blocca se non pronto
-pthread\_mutex\_lock(&lock);
-while (child\_done == 0) {  // Uso un while ciclico di protezione base
-    pthread\_cond\_wait(&cond, &lock);
+pthread_mutex_lock(&lock);
+while (child_done == 0) {  // Uso un while ciclico di protezione base
+    pthread_cond_wait(&cond, &lock);
 }
-// Se e' qui in basso, cond\_signal e' arrivato e lock e' stato ripreso in mano!
-pthread\_mutex\_unlock(&lock);
+// Se e' qui in basso, cond_signal e' arrivato e lock e' stato ripreso in mano!
+pthread_mutex_unlock(&lock);
 
 // T-FIGLIO: Avvisa la terminazione
-pthread\_mutex\_lock(&lock);
-child\_done = 1;              
-pthread\_cond\_signal(&cond); // Rende udibile ai pendenti il cambiamento
-pthread\_mutex\_unlock(&lock);
+pthread_mutex_lock(&lock);
+child_done = 1;              
+pthread_cond_signal(&cond); // Rende udibile ai pendenti il cambiamento
+pthread_mutex_unlock(&lock);
 \end{ccode}
 
 \subsection{Barriera a Broadcast (\texttt{ex2\_barrier.c})}
@@ -251,11 +248,11 @@ Prevede la sostituzione radicale nel \textit{modus operandi} di blocco della bar
 \begin{ccode}[Snippet Esercizio 2: Arrivo globale al punto zero]
 if (count == N) {
     // Ultimo thread arrivato al checkpoint
-    pthread\_cond\_broadcast(&cond); // -> Sveglia massivamente da 0 N thread in coda
+    pthread_cond_broadcast(&cond); // -> Sveglia massivamente da 0 N thread in coda
 } else {
     // Si accodano attendendo
     while (count < N) {
-        pthread\_cond\_wait(&cond, &lock);
+        pthread_cond_wait(&cond, &lock);
     }
 }
 \end{ccode}
@@ -263,7 +260,7 @@ if (count == N) {
 
 \subsection{Istruzioni di Esecuzione}
 L'applicativo viene gestito interamente tramite Makefile:
-\begin{terminal}[Build & Run]
+\begin{terminal}[Build \& Run]
 $ make
 $ ./programma
 \end{terminal}
@@ -273,7 +270,7 @@ Le compilazioni e le catture da log sul terminale attestano il soddisfacimento d
 
 \subsection{Output Simulazione Join}
 \begin{terminal}[System V Message Queues - Risultati]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho13$ ./ex1\_join
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho13$ ./ex1_join
 Padre: Creo il thread figlio.
 Padre: In attesa della terminazione del figlio...
 Thread Figlio: Iniziato. Faccio un po' di lavoro...
@@ -301,8 +298,7 @@ Le Condition Variables sono apparse e si sono dimostrate infinitamente più puli
 
 \noindent \textbf{Sviluppi futuri:}
 \begin{itemize}
-    \item \textbf{Spurious Wakeups}: Aggiunta di mitigazioni estensive per proteggere i contatori dall'insorgere occasionale di finti risvegli della CPU che attivano chiamate signal del tutto impreviste ma documentate sui layer UNIX POSIX.
-    \item \textbf{High-Level Monitor}: Sviluppo di una architettura a "Monitor", incapsulando tutte le condition variables e mutex per il design pattern Prod-Cons mediante l'utilizzo dell'Incapsulamento Object-Oriented assemblandosi sui framework \texttt{C++11/C++20 std::condition\_variable}.
+    \item \textbf{Analisi Prestazionale}: Studio dell\'impatto della latenza di sistema sulla scalabilità dell\'architettura.
+    \item \textbf{Ottimizzazione delle Risorse}: Refactoring del codice per minimizzare l\'uso della CPU in contesti ad alta concorrenza.
 \end{itemize}
-
 \end{document}

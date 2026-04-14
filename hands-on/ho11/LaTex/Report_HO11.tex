@@ -132,7 +132,7 @@
 \fancyhead[R]{%
   \parbox[b]{0.35\textwidth}{%
     \flushright
-    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \includegraphics[width=3.5cm]{logo_unime_orizontale.png}
     \vspace{15pt}
   }%
 }
@@ -150,7 +150,7 @@
     \thispagestyle{empty}
     \centering
     \vspace*{1cm}
-    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \includegraphics[width=6cm]{logo_unime_orizontale.png}\par\vspace{1cm}
     \vspace{2cm}
     {\Large \textbf{Università degli Studi di Messina}\par}
     {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
@@ -180,11 +180,7 @@ L'obiettivo si articola in tre task principali:
 
 \section{Stato dell'Arte}
 Le problematiche sollevate nell'Hands-On 11 costituiscono le fondamenta della programmazione concorrente:
-\begin{itemize}
-    \item \textbf{Sezione Critica e Condizioni di Corsa}: Si verifica quando più flussi di esecuzione (es. thread) accedono simultaneamente e in modalità non atomica a informazioni condivise (memoria, variabili). La mancanza di atomicità espone le operazioni d'aggiornamento a sovrascritture incrociate al momento della schedulazione del sistema operativo.
-    \item \textbf{Mutex (Mutual Exclusion)}: Costituisce il costrutto nativo delle specifiche \texttt{Pthreads} (tramite \texttt{pthread\_mutex\_t}) per implementare il blocco (\textit{lock}) granulare all'ingresso della sezione critica e lo sblocco (\textit{unlock}) all'uscita. Garantisce formalmente che solo un thread possa trovarsi all'interno del proprio perimetro in ogni dato istante temporale.
-    \item \textbf{Semofori (Counting Semaphores)}: Strumento di generalizzazione (gestito via \texttt{<semaphore.h>}). A differenza di un mutex (che è assimilabile spesso a un semaforo binario controllante una sola risorsa esatta), un semaforo inizializzato a $N$ protegge l'accesso limitato ad $N$ entità. I thread usano \texttt{wait()} per acquisire un token, causandone decremento, e \texttt{post()} per rilasciarlo al termine dell'operazione.
-\end{itemize}
+
 
 \section{Metodologia ed Implementazione}
 Per coprire gli obiettivi prestabiliti, l'ecosistema del laboratorio fa uso della libreria \texttt{<pthread.h>} nello standerd POSIX e \texttt{<semaphore.h>} per le varianti col semaforo.
@@ -229,40 +225,40 @@ Per coprire gli obiettivi prestabiliti, l'ecosistema del laboratorio fa uso dell
 \subsection{Race Condition Senza Sincronizzazione}
 Nel primissimo passo viene volutamente violata la sincronizzazione. Il \texttt{shared\_counter++} viene eseguito da 10 thread 10.000 volte ciascuno.
 \begin{ccode}[Snippet Esercizio 1: Assenza di controllo in Sezione Critica]
-void* thread\_function(void* arg) {
-    long thread\_id = (long)arg;
-    for (int i = 0; i < MAX\_VALUE; i++) {
-        shared\_counter++; // <--- Non atomico: Read, Increment, Write
+void* thread_function(void* arg) {
+    long thread_id = (long)arg;
+    for (int i = 0; i < MAX_VALUE; i++) {
+        shared_counter++; // <--- Non atomico: Read, Increment, Write
     }
-    printf("Thread %ld: shared\_counter = %d\n", thread\_id, shared\_counter);
-    pthread\_exit(NULL);
+    printf("Thread %ld: shared_counter = %d\n", thread_id, shared_counter);
+    pthread_exit(NULL);
 }
 \end{ccode}
 
 \subsection{Mutua Esclusione con Mutex}
 L'approccio corretto del medesimo codice precedente fa uso del lock della libreria pthread passandogli l'indirizzo di un \texttt{counter\_mutex}.
 \begin{ccode}[Snippet Esercizio 2: Controllo tramite Mutex]
-for (int i = 0; i < MAX\_VALUE; i++) {
-    pthread\_mutex\_lock(&counter\_mutex);
-    shared\_counter++; // <--- Protetto al 100% da accesso multi-thread
-    pthread\_mutex\_unlock(&counter\_mutex);
+for (int i = 0; i < MAX_VALUE; i++) {
+    pthread_mutex_lock(&counter_mutex);
+    shared_counter++; // <--- Protetto al 100% da accesso multi-thread
+    pthread_mutex_unlock(&counter_mutex);
 }
 \end{ccode}
 
 \subsection{Gestione della Concorrenza Parziale (Semofori)}
 Il terzo esercizio introduce l'entità \texttt{sem\_t} di cui si decreta in fase di inizializzazione un contatore esatto di concorrenza.
 \begin{ccode}[Snippet Esercizio 3: Semaforo max limit 2]
-sem\_wait(&max\_concurrency\_sem); // Thread attende il token
+sem_wait(&max_concurrency_sem); // Thread attende il token
 // ... Critical Section accessibile per due thread contemporanei ...
 sleep(2); // Lavoro pesante simulato
-sem\_post(&max\_concurrency\_sem); // Ritiro e rilascio
+sem_post(&max_concurrency_sem); // Ritiro e rilascio
 \end{ccode}
 Il cui setup del semaforo poggia sulla chiamata \texttt{sem\_init(\&max\_concurrency\_sem, 0, 2);}.
 
 
 \subsection{Istruzioni di Esecuzione}
 L'applicativo viene gestito interamente tramite Makefile:
-\begin{terminal}[Build & Run]
+\begin{terminal}[Build \& Run]
 $ make
 $ ./programma
 \end{terminal}
@@ -272,23 +268,23 @@ L'esecuzione della pipeline ha restituito un comportamento pienamente conforme a
 
 \subsection{Output Senza Sincronizzazione}
 \begin{terminal}[Output di esecuzione ex1\_no\_sync]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex1\_no\_sync
-Thread 9: shared\_counter = 76935
-Final value of shared\_counter: 76935 (Expected: 100000)
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex1_no_sync
+Thread 9: shared_counter = 76935
+Final value of shared_counter: 76935 (Expected: 100000)
 \end{terminal}
 La chiara denotazione di "informazione perduta" riflette statisticamente che le operazioni non sono avvenute correttamente.
 
 \subsection{Output con Sincronizzazione Mutex}
 \begin{terminal}[Output di esecuzione ex2\_sync]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex2\_sync
-Thread 4: shared\_counter = 100000
-Final value of shared\_counter: 100000 (Expected: 100000)
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex2_sync
+Thread 4: shared_counter = 100000
+Final value of shared_counter: 100000 (Expected: 100000)
 \end{terminal}
 Con un perimetro sincronizzato l'incremento di ogni esecuzione finisce esattamente alla cifra teoricamente attesa di 100.000 (10.000 incremento a thread $\times$ 10 thread allocati).
 
 \subsection{Output Multi-Accesso Semaforo}
 \begin{terminal}[Output di esecuzione ex3\_semaphore]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex3\_semaphore
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho11$ ./ex3_semaphore
 Thread 0 has ENTERED the critical section.
 Thread 1 has ENTERED the critical section.
 Thread 2 is waiting to enter the critical section...
@@ -305,8 +301,7 @@ L'Hands-On 11 offre la prova empirica definitiva che lo scambio di memoria in am
 
 \noindent \textbf{Sviluppi futuri:}
 \begin{itemize}
-    \item \textbf{Deadlock Prevention}: Esplorare l'implementazione di sistemi di priorità e ordine logico formale nell'acquisizione di mutex multipli paralleli ai fine da evitare che due thread si blocchino permanentemente su lock ciclici (Deadlocks).
-    \item \textbf{Rwlocks (Read-Write Locks)}: Implementare soluzioni avanzate che consentano l'accesso parallelo e contemporaneo alla lettura dei dati ma rendano vincolante la mutua esclusione solo per la scrittura, ottimizzando fortemente contesti ove è richiesta un'informazione aggiornata ma raramente modificata.
+    \item \textbf{Analisi Prestazionale}: Studio dell\'impatto della latenza di sistema sulla scalabilità dell\'architettura.
+    \item \textbf{Ottimizzazione delle Risorse}: Refactoring del codice per minimizzare l\'uso della CPU in contesti ad alta concorrenza.
 \end{itemize}
-
 \end{document}

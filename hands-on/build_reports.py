@@ -18,9 +18,8 @@ for i in range(1, 20):
         # Compile Report_HO{i}.tex
         if os.path.exists(new_tex):
             print(f"Compiling {new_tex}...")
-            # Use batchmode to prevent stuck prompts, and increased timeout
             try:
-                # Clean up auxiliary files first to ensure fresh Index generation
+                # Clean up auxiliary files first
                 subprocess.run(
                     ["latexmk", "-C"],
                     cwd=tex_dir,
@@ -28,13 +27,27 @@ for i in range(1, 20):
                     stderr=subprocess.DEVNULL
                 )
                 
-                subprocess.run(
-                    ["latexmk", "-pdf", "-interaction=batchmode", f"Report_HO{i}.tex"],
+                # Use nonstopmode to see errors in logs but not hang
+                result = subprocess.run(
+                    ["latexmk", "-pdf", "-interaction=nonstopmode", f"Report_HO{i}.tex"],
                     cwd=tex_dir,
                     timeout=120,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
+                    capture_output=True,
                 )
+                
+                output = result.stdout.decode('utf-8', errors='replace')
+                
+                if result.returncode != 0:
+                    print(f"FAILED to compile {new_tex} (Exit Code {result.returncode})")
+                    # Check log for errors if it exists
+                    log_file = os.path.join(tex_dir, f"Report_HO{i}.log")
+                    if os.path.exists(log_file):
+                        with open(log_file, 'r', encoding='utf-8', errors='replace') as f:
+                            log_content = f.read()
+                            errors = [line for line in log_content.splitlines() if line.startswith('!')]
+                            for err in errors[:5]:
+                                print(f"  {err}")
+
             except subprocess.TimeoutExpired:
                 print(f"Timeout compiling {new_tex}")
             except Exception as e:
@@ -51,10 +64,17 @@ for i in range(1, 20):
             else:
                 print(f"WARNING: Index NOT generated for HO{i}")
 
-            # The compile should create ../Report_HO{i}.pdf because of .latexmkrc
-            # but if it creates it in LaTex/ directory, we move it
-            compiled_pdf = os.path.join(tex_dir, f"Report_HO{i}.pdf")
+            # With .latexmkrc, PDF is created in hoX/ (parent of LaTex/)
+            # We check both locations to be safe
             target_pdf = os.path.join(ho_dir, f"Report_HO{i}.pdf")
-            if os.path.exists(compiled_pdf):
-                os.rename(compiled_pdf, target_pdf)
-                print(f"Moved {compiled_pdf} to {target_pdf}")
+            local_pdf = os.path.join(tex_dir, f"Report_HO{i}.pdf")
+            
+            if os.path.exists(local_pdf):
+                if os.path.exists(target_pdf):
+                    os.remove(target_pdf)
+                os.rename(local_pdf, target_pdf)
+                print(f"Moved {local_pdf} to {target_pdf}")
+            elif os.path.exists(target_pdf):
+                print(f"PDF correctly placed in {target_pdf}")
+            else:
+                print(f"ERROR: PDF not found for HO{i}")

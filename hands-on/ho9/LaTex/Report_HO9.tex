@@ -132,7 +132,7 @@
 \fancyhead[R]{%
   \parbox[b]{0.35\textwidth}{%
     \flushright
-    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \includegraphics[width=3.5cm]{logo_unime_orizontale.png}
     \vspace{15pt}
   }%
 }
@@ -150,7 +150,7 @@
     \thispagestyle{empty}
     \centering
     \vspace*{1cm}
-    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \includegraphics[width=6cm]{logo_unime_orizontale.png}\par\vspace{1cm}
     \vspace{2cm}
     {\Large \textbf{Università degli Studi di Messina}\par}
     {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
@@ -176,11 +176,7 @@ L'Hands-On 9 analizza i meccanismi interni alla trasformazione del codice sorgen
 
 \section{Stato dell'Arte}
 La pipeline di compilazione moderna e la gestione dei simboli sono i pilastri del software engineering modulare.
-\begin{itemize}
-    \item \textbf{Lifecycle del Simbolo}: Dall'analisi lessicale alla generazione del codice oggetto, ogni variabile o funzione viene catalogata. Il linker utilizza queste informazioni per unire i moduli (\texttt{.o}) in un unico spazio di indirizzamento.
-    \item \textbf{Dynamic Linking vs Static Linking}: Mentre il linking statico include tutte le librerie nel binario, quello dinamico rimanda la risoluzione a runtime tramite la \textit{Procedure Linkage Table} (PLT) e la \textit{Global Offset Table} (GOT), permettendo il risparmio di spazio e memoria.
-    \item \textbf{Sezioni ELF}: Un binario è diviso in segmenti logici (\texttt{.text}, \texttt{.data}, \texttt{.bss}, \texttt{.rodata}). La distinzione tra essi determina se un simbolo risiede in memoria a sola lettura o se richiede inizializzazione esplicita.
-\end{itemize}
+
 
 \section{Metodologia ed Implementazione}
 L'implementazione si focalizza sull'uso di tool di introspezione binaria nel contesto di un Makefile strutturato.
@@ -229,10 +225,10 @@ L'implementazione si focalizza sull'uso di tool di introspezione binaria nel con
 \subsection{Analisi dei Simboli con \texttt{nm}}
 È stata creata un'architettura multi-file (\texttt{main.c}, \texttt{ex1\_symbols.c}) per osservare il comportamento dei simboli \texttt{U} (Undefined) e \texttt{T} (Text).
 \begin{terminal}[Analisi Tabella Simboli]
-$ nm ex1\_symbols.o
-0000000000000000 D var\_globale   <-- Data (D)
+$ nm ex1_symbols.o
+0000000000000000 D var_globale   <-- Data (D)
                  U printf        <-- Indefinito (U)
-0000000000000000 T funzione\_test <-- Text (T)
+0000000000000000 T funzione_test <-- Text (T)
 \end{terminal}
 
 \subsection{Compilazione Modulare}
@@ -266,8 +262,7 @@ L'Hands-On 9 ha chiarito i passaggi fondamentali della generazione del software.
 
 \noindent \textbf{Sviluppi futuri:}
 \begin{itemize}
-    \item \textbf{Reverse Engineering}: Utilizzo di \texttt{objdump} e \texttt{readelf} per ricostruire il flusso di esecuzione da binari privi di debug symbols (\textit{stripped}).
-    \item \textbf{Security Hardening}: Studio dell'impatto del \textit{Link-Time Optimization} (LTO) e della \textit{Position Independent Code} (PIC) sulla sicurezza e sulle prestazioni del binario finale.
+    \item \textbf{Analisi Prestazionale}: Studio dell\'impatto della latenza di sistema sulla scalabilità dell\'architettura.
+    \item \textbf{Ottimizzazione delle Risorse}: Refactoring del codice per minimizzare l\'uso della CPU in contesti ad alta concorrenza.
 \end{itemize}
-
 \end{document}

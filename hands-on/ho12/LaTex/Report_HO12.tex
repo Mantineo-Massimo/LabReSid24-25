@@ -35,7 +35,7 @@
 \usepackage{graphicx}
 \graphicspath{{../../assets/}{../../assets/ho1/}{../../assets/ho2/}{../../assets/ho3/}{../../assets/ho4/}{../../assets/ho5/}{../../assets/ho6/}{../../assets/ho7/}{../../assets/ho8/}{../../assets/ho10/}}
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, shapes.symbols}
+\usetikzlibrary{positioning, arrows.meta, shapes.symbols, shapes.multipart}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{amsmath, amssymb}
@@ -132,7 +132,7 @@
 \fancyhead[R]{%
   \parbox[b]{0.35\textwidth}{%
     \flushright
-    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \includegraphics[width=3.5cm]{logo_unime_orizontale.png}
     \vspace{15pt}
   }%
 }
@@ -150,7 +150,7 @@
     \thispagestyle{empty}
     \centering
     \vspace*{1cm}
-    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \includegraphics[width=6cm]{logo_unime_orizontale.png}\par\vspace{1cm}
     \vspace{2cm}
     {\Large \textbf{Università degli Studi di Messina}\par}
     {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
@@ -178,10 +178,7 @@ L'Hands-On 12 espande l'orizzonte delle problematiche legate alla concorrenza es
 
 \section{Stato dell'Arte}
 Il controllo della sincronizzazione passa attraverso i semafori generalizzati.
-\begin{itemize}
-    \item \textbf{Barriere (Barrier Synchronization)}: Sono punti di blocco in cui un thread non può procedere a meno che tutti gli altri compagni abbiano anch'essi raggiunto lo stesso blocco logico. Sono ampiamente impiegate in logiche multi-step e nei branch di algoritmi genetici paralleli o reti neurali.
-    \item \textbf{Produttore-Consumatore}: È un \textit{design pattern} essenziale in scenari di buffering di I/O, streaming audio-video e pipeline di elaborazione asincrona. I \textbf{semafori} fungono da mediatori, mantenendo implicitamente lo stato di svuotamento/riempimento del buffer condiviso, sostituendosi a complessi controlli espliciti della dimensione tramite \texttt{if} ed estenuanti cicli d'attesa (spinlocks o active-wait).
-\end{itemize}
+
 
 \section{Metodologia ed Implementazione}
 
@@ -235,29 +232,29 @@ L'architettura del sistema si basa sulla coordinazione di tre semafori per gesti
 Il buffer circolare finito è gestito da tre entità di blocco.
 \begin{ccode}[Snippet Esercizio 2: Tre Semafori Coordinati]
 // Sincronizzazione:
-sem\_init(&empty\_slots, 0, BUFFER\_SIZE);  // Attesta quanti spazi sono vuoti
-sem\_init(&filled\_slots, 0, 0);           // Attesta quanti spazi sono pieni
-sem\_init(&mutex, 0, 1);                  // Regolamenta l'esclusione sul buffer
+sem_init(&empty_slots, 0, BUFFER_SIZE);  // Attesta quanti spazi sono vuoti
+sem_init(&filled_slots, 0, 0);           // Attesta quanti spazi sono pieni
+sem_init(&mutex, 0, 1);                  // Regolamenta l'esclusione sul buffer
 
 // Lato Produttore:
-sem\_wait(&empty\_slots);  // Preleva uno slot "vuoto"
-sem\_wait(&mutex);        // Entra
+sem_wait(&empty_slots);  // Preleva uno slot "vuoto"
+sem_wait(&mutex);        // Entra
 buffer[in] = item;       // PRODUCE
-sem\_post(&mutex);        // Esce
-sem\_post(&filled\_slots); // Regala un token "pieno" al consumatore
+sem_post(&mutex);        // Esce
+sem_post(&filled_slots); // Regala un token "pieno" al consumatore
 
 // Lato Consumatore:
-sem\_wait(&filled\_slots); // Preleva uno slot "pieno"
-sem\_wait(&mutex);        // Entra
+sem_wait(&filled_slots); // Preleva uno slot "pieno"
+sem_wait(&mutex);        // Entra
 int item = buffer[out];  // CONSUMA
-sem\_post(&mutex);        // Esce
-sem\_post(&empty\_slots);  // Converte il "pieno" appena letto in "vuoto"
+sem_post(&mutex);        // Esce
+sem_post(&empty_slots);  // Converte il "pieno" appena letto in "vuoto"
 \end{ccode}
 
 
 \subsection{Istruzioni di Esecuzione}
 L'applicativo viene gestito interamente tramite Makefile:
-\begin{terminal}[Build & Run]
+\begin{terminal}[Build \& Run]
 $ make
 $ ./programma
 \end{terminal}
@@ -267,7 +264,7 @@ L'esecuzione del codice ha fornito log testuali perfetti di dimostrazione del co
 
 \subsection{Output Barriera}
 \begin{terminal}[Output di Esecuzione - Memoria Condivisa]
-massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho12$ ./ex1\_barrier
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho12$ ./ex1_barrier
 Thread 1: Arrivato alla barriera (2/5).
 Thread 2: Arrivato alla barriera (3/5).
 Thread 3: Arrivato alla barriera (4/5).
@@ -295,8 +292,7 @@ Gli strumenti elaborati sanciscono come il concetto di semaforo permetta la conv
 
 \noindent \textbf{Sviluppi futuri:}
 \begin{itemize}
-    \item \textbf{POSIX Barriers}: Nei contesti produzione reale con standard attuali, andrebbe utilizzato \texttt{pthread\_barrier\_t} (meccanismo nativo POSIX) invece della complessa re-implementazione custom a semafori.
-    \item \textbf{Cond Variables (CV)}: Ottimizzazione del produttore consumatore utilizzando le Variabili Condizionali insieme a un solo mutex anziché usare molteplici semafori a conteggio, approccio standard nei monitor o in programmazione ad alto livello.
+    \item \textbf{Gestione Dinamica del Pool}: Implementazione di un sistema di ridimensionamento automatico del numero di thread in base al tasso di riempimento del buffer.
+    \item \textbf{Priority Queuing}: Evoluzione del buffer FIFO in una coda a priorità per il trattamento differenziato dei messaggi urgenti.
 \end{itemize}
-
 \end{document}
