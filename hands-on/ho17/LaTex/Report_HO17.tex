@@ -222,7 +222,7 @@ Siccome il grafo visivo manca all'appello, optiamo per disporre una trincea a \t
         };
     \end{tikzpicture}
     \caption{Topologia del grafo pesato e calcolo iterativo dei cammini minimi (Distance-Vector).}
-    \label{fig:bellman\_ford\_graph}
+    \label{fig:bellman_ford_graph}
 \end{figure}
 
 Abbiamo programmato volontariamente un trabocchetto: benché esista l'arco diretto Nodo 2 $\rightarrow$ Target 0 al costo di asticella `5`, la somma dei pesi passando attivamente per Nodo 1 costa solamente `3` ($1+2$). Costringiamo così in maniera fittizia l'algoritmo a ricalcolare le metriche ignorando l'arco apparentemente più palese (Il nodo 3 dista `1` dal 2, per un totale di `4`, ed in quanto esso dista `4` dal Nodo 1 che aggiunge il fatidico `2`, la via più ovvia peserebbe `6`. Viene scelto `4`).

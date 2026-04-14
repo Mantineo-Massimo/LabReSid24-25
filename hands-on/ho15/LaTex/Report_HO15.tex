@@ -211,7 +211,7 @@ Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **
         \node[fifo, right=0.5cm of a2, align=center] {Inter-Process\\Communication\\via Named Pipes};
     \end{tikzpicture}
     \caption{Topologia distribuita a diamante per la simulazione dell'algoritmo di Flooding.}
-    \label{fig:flooding\_topology}
+    \label{fig:flooding_topology}
 \end{figure}
 
 Dal parent \texttt{main()} del C, il master lancia ciclicamente la chiamata di Sistema \texttt{mkfifo("/tmp/fifo\_src\_dst", 0666)} generando i tubi direzionali:

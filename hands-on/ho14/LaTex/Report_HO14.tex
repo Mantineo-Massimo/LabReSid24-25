@@ -204,7 +204,7 @@ Il MidTerm (Hands-On 14) riunisce ed eleva le competenze acquisite operando fino
         \node[below=0.1cm of serv, font=\itshape\tiny] {Mutex Protected Resources};
     \end{tikzpicture}
     \caption{Architettura del Sistema Bancario Distribuito Multi-Client.}
-    \label{fig:banking\_arch}
+    \label{fig:banking_arch}
 \end{figure}
 
 Il sistema si fonda su un'architettura **Client-Server TCP** e prevede limitatori rigorosi per la concorrenza (10 Threads), più protezioni di memoria contro la \textit{Race Condition} che andrebbe a distruggere la congruenza dell'estratto conto.
@@ -285,7 +285,7 @@ I test condotti sull'interfaccia di Loopback confermano a livello ISO/OSI il cor
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{ho14/ho14_wireshark\_rpc.png}
+    \includegraphics[width=1\textwidth]{\detokenize{ho14/ho14_wireshark_rpc.png}}
     \caption{Cattura Wireshark: TCP 3-Way Handshake, Invio Dati (PSH) e Teardown}
 \end{figure}
 
