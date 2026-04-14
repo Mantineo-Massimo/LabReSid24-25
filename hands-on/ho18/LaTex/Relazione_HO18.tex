@@ -1,0 +1,108 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Massimo Mantineo}
+\fancyhead[C]{Hands-On 18}
+\fancyhead[R]{A.A. 2024/2025}
+\fancyfoot[C]{\thepage}
+
+\title{Relazione Hands-On 18: MapReduce Distribuito con Ray.io}
+\author{Massimo Mantineo (Matricola: 541924)}
+\date{Aprile 2026}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduzione}
+L'Hands-On 18 affronta lo studio e l'implementazione di un sistema di calcolo distribuito basato sul paradigma \textbf{MapReduce}. A differenza degli esercizi precedenti svolti in C e focalizzati sulla comunicazione inter-processo a basso livello o socket, questo esperimento utilizza \textbf{Python} e il framework \textbf{Ray.io} per gestire la parallelizzazione e la distribuzione dei task su cluster (reali o virtuali).
+
+L'obiettivo specifico è il conteggio delle frequenze dei termini presenti nel testo del celebre romanzo \textit{"Il Signore degli Anelli"}, analizzando come i task vengono suddivisi, eseguiti in parallelo e infine aggregati.
+
+\section{Stato dell'Arte}
+Il paradigma MapReduce, reso celebre da Google, si basa su due fasi principali:
+\begin{itemize}
+    \item \textbf{Map}: I dati di input vengono suddivisi in piccoli pezzi e processati in parallelo da diversi worker.
+    \item \textbf{Reduce}: I risultati parziali dei worker vengono aggregati per produrre il risultato finale.
+\end{itemize}
+
+Framework moderni come \textbf{Ray} permettono di implementare tali pattern in modo efficiente, offrendo astrazioni semplici per l'esecuzione remota di funzioni e la gestione delle dipendenze, superando i limiti della libreria standard multiprocess di Python.
+
+\section{Metodologia e Implementazione}
+L'architettura del sistema prevede:
+\begin{enumerate}
+    \item \textbf{Splitting}: Il testo di input (\texttt{lotr.txt}) viene suddiviso in $N$ blocchi.
+    \item \textbf{Remote Map Tasks}: Ogni blocco è processato da una funzione Ray remota (\texttt{@ray.remote}) che produce un \texttt{Counter} locale.
+    \item \textbf{Aggregation}: I risultati vengono scaricati dal cluster tramite \texttt{ray.get()} e fusi nel Counter globale.
+\end{enumerate}
+
+Il codice principale è contenuto in \texttt{mapreduce\_lotr.py}.
+
+\section{Risultati Sperimentali}
+L'esecuzione sul testo completo del romanzo ("The Lord of the Rings") ha prodotto i seguenti risultati (Top 10 parole per frequenza):
+
+\begin{verbatim}
+Starting distributed MapReduce on lotr.txt...
+Report generated: lotr_report.txt
+Top 10 words:
+  the: 11705
+  and: 7555
+  of: 5083
+  to: 3948
+  a: 3728
+  he: 3038
+  in: 2961
+  i: 2825
+  it: 2780
+  that: 2539
+\end{verbatim}
+
+I risultati mostrano la tipica distribuzione delle lingue naturali, dove articoli e congiunzioni dominano il conteggio. La distribuzione tramite Ray è avvenuta correttamente, inizializzando un cluster locale sulla macchina di test e completando l'analisi di migliaia di parole in pochi secondi.
+
+\section{Conclusioni e Sviluppi Futuri}
+L'esperimento dimostra l'efficacia di Ray per l'elaborazione distribuita. Sviluppi futuri potrebbero includere:
+\begin{itemize}
+    \item Implementazione di fasi di Reduce distribuite (Shuffling).
+    \item Utilizzo di dataset massivi caricati da cloud storage (AWS S3/GCS).
+    \item Filtraggio di "stop-words" per un'analisi semantica più accurata.
+\end{itemize}
+
+\end{document}

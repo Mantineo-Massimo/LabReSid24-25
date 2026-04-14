@@ -1,0 +1,240 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+% margin settings
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={Server TCP con epoll()},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 4},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language=bash,
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+% settings for C listings
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 4
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Relazione: Server TCP ad Alte Prestazioni con \texttt{epoll()}\\
+\large (Hands-On 4)}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+% Cover page
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 4:}\\
+    Server TCP ad Alte Prestazioni con \texttt{epoll()}\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Problem Statement}
+L'ottavo Hands-On (HO4) si focalizza sullo sviluppo di un server TCP ad alte prestazioni su piattaforma Linux. L'obiettivo primario è migrare dal modello di multiplexing tradizionale (\texttt{select}) alla moderna interfaccia \textbf{\texttt{epoll}}. Il sistema deve essere in grado di gestire simultaneamente fino a 10 connessioni client, garantendo l'integrità dei messaggi ricevuti e fornendo un feedback immediato (\texttt{ACK_EPOLL_OK}). La sfida tecnica consiste nell'ottimizzare l'uso delle risorse di sistema riducendo l'overhead di scansione dei descrittori tipico delle soluzioni legacy.
+
+\section{Stato dell'Arte}
+Il kernel Linux ha introdotto \texttt{epoll} (Event Poll) per superare i limiti di scalabilità della \texttt{select()} e della \texttt{poll()}.
+\begin{itemize}
+    \item \textbf{Scalabilità O(1)}: A differenza della \texttt{select}, la cui complessità cresce proporzionalmente al numero di FD monitorati ($O(N)$), \texttt{epoll} ha una complessità di risveglio costante $O(k)$, dove $k$ è il numero di eventi attivi.
+    \item \textbf{Meccanismo Kernel-Side}: \texttt{epoll} mantiene una struttura dati ad albero (\textit{Red-Black Tree}) nel kernel per tracciare i socket di interesse. Questo evita di copiare l'intero set di descrittori dallo spazio utente a quello kernel a ogni chiamata.
+    \item \textbf{Trigger Modes}: 
+    \begin{itemize}
+        \item \textit{Level Triggered (LT)}: Notifica l'evento finché il buffer non è vuoto.
+        \item \textit{Edge Triggered (ET)}: Notifica l'evento solo al momento della transizione (nuovo dato). Richiede l'uso di socket non-bloccanti per evitare stalli.
+    \end{itemize}
+\end{itemize}
+
+\section{Metodologia ed Implementazione}
+L'implementazione sfrutta le tre primitive cardine dell'API epoll per gestire il ciclo di vita delle connessioni.
+
+\subsection{Inizializzazione e Registrazione}
+Viene creata un'istanza di epoll e il socket di ascolto viene aggiunto alla lista di interesse:
+\begin{ccode}[Snippet Registrazione epoll]
+epoll_fd = epoll_create1(0);
+ev.events = EPOLLIN; // Monitoraggio in lettura
+ev.data.fd = listen_fd;
+epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listen_fd, &ev);
+\end{ccode}
+
+\subsection{Event Loop Asincrono}
+Il server rimane in attesa bloccante su \texttt{epoll_wait}, che restituisce solo i descrittori pronti:
+\begin{ccode}[Snippet Loop degli Eventi]
+int nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+for (int n = 0; n < nfds; ++n) {
+    if (events[n].data.fd == listen_fd) {
+        // Accettazione e aggiunta nuovo client con EPOLL_CTL_ADD
+    } else {
+        // Lettura dati e invio ACK_EPOLL_OK
+    }
+}
+\end{ccode}
+
+\section{Risultati}
+La validazione è stata condotta tramite test di carico sintetico e analisi comparativa.
+
+\subsection{Test di Concorrenza}
+L'esecuzione di 5 client simultanei ha confermato la corretta gestione dei File Descriptor. Il server ha riscontrato latenze minime, visualizzando sui log l'interlacciamento degli ID dei socket (fd:5, fd:6, ecc.) senza mostrare segni di stallo.
+
+\subsection{Analisi Wireshark}
+L'ispezione della cattura (Figura~\ref{fig:wireshark_epoll_multi}) evidenzia che il server \texttt{epoll} risponde istantaneamente a ogni pacchetto \texttt{PSH} ricevuto. La stabilità della connessione è garantita dalla gestione asincrona degli acknowledgment a livello applicativo.
+
+\subsection{Performance Benchmark}
+I grafici prestazionali (Figura 4) mostrano che per carichi piccoli la differenza con la \texttt{select} è trascurabile, ma la stabilità del tempo di risposta conferma l'efficienza del meccanismo di notifica kernel-based.
+
+\section{Conclusioni e sviluppi futuri}
+L'Hands-On 4 ha dimostrato la superiorità tecnologica di \texttt{epoll} per la creazione di servizi di rete moderni. La riduzione della copia dei dati tra user-space e kernel rende questa soluzione lo standard per architetture cloud ad alte prestazioni.
+
+\noindent \textbf{Sviluppi futuri:}
+\begin{itemize}
+    \item \textbf{io_uring}: Esplorazione del nuovo sottosistema Linux \texttt{io_uring} per eliminare completamente le syscall bloccanti tramite code di completamento asincrone.
+    \item \textbf{Multi-Core}: Implementazione di un modello \textit{multi-threaded epoll} per distribuire la gestione degli eventi su più core CPU.
+\end{itemize}
+
+\end{document}

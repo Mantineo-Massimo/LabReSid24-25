@@ -1,0 +1,232 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={HO17: Distributed Bellman-Ford},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 17},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.symbols}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language=bash,
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 17
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Relazione (HO17)\\
+\large Algoritmo Bellman-Ford: Distributed Shortest Path via IPC}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 17:}\\
+    Algoritmo di Bellman-Ford per il Distance-Vector Routing\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Introduzione}
+Nell'ambito dell'astrazione logica di nodi di rete come processi UNIX, si richiede l'implementazione del celebre algoritmo matematico di \textbf{Bellman-Ford} per il monitoraggio dei grafi pesati. Si tratta dell'archetipo fondante per la classe di protocolli \textit{Distance-Vector} usati dai router fisici per eleggere la minima distanza hop-by-hop verso una sottorete (Si veda, ad esempio, lo standard `RIP` o `EIGRP`). Ancora una volta l'elaborazione non sarà accentrata su un database monolitico for-loop classico, ma si propagherà in maniera genuinamente \textbf{Distribuita ed Asincrona} sfruttando \texttt{fork} ed appoggiandosi alle Syscall \texttt{mkfifo} per le code di messaggistica.
+
+\section{Costrutto Logico-Matematico}
+L'algoritmo di Bellman-Ford assicura, in reti prive di cicli a costo negativo, la convergenza totale dei pesi. 
+Esso si esprime tramite l'assioma di calcolo iterativo:
+\begin{equation}
+    D(x, y) = \min_v \left\{ c(x,v) + D(v,y) \right\}
+\end{equation}
+Dove:
+\begin{itemize}
+    \item $D(x,y)$: Il valore stimato attualizzato della distanza dal nodo $x$ al target $y$.
+    \item $c(x,v)$: Il peso prefissato nel cavo (Edge) che separa il nodo adiacente $x$ dal nodo limitrofo $v$.
+\end{itemize}
+
+Ogni nodo \textit{riceve} in asincrono messaggi in buffer dalla propria FIFO, decodifica il Vettore $D(v,y)$ ricevuto, somma all'overhead biologico $c(x,v)$ che esso prova per raggiungere $v$, e decreta se il cammino calcolato è più economico di quello che custodiva in memoria, mutando ed allertando i vicini di rimando in caso di Update positivo.
+
+\section{Metodologia Appiedata}
+
+Siccome il grafo visivo manca all'appello, optiamo per disporre una trincea a \textbf{Cost Matrix Asimmetrica} per 4 Nodi:
+\begin{ccode}
+// Single-Source cost_matrix
+// Node 0 is the Target.
+int cost_matrix[NUM_NODES][NUM_NODES] = {
+    {0, 2, 5, INF}, // Edge out dal nodo 0
+    {2, 0, 1, 4},   // Edge out dal nodo 1
+    {5, 1, 0, 1},   // Edge out dal nodo 2
+    {INF, 4, 1, 0}  // Edge out dal nodo 3
+};
+\end{ccode}
+Abbiamo programmato volontariamente un trabocchetto: benché esista l'arco diretto Nodo 2 $\rightarrow$ Target 0 al costo di asticella `5`, la somma dei pesi passando attivamente per Nodo 1 costa solamente `3` ($1+2$). Costringiamo così in maniera fittizia l'algoritmo a ricalcolare le metriche ignorando l'arco apparentemente più palese (Il nodo 3 dista `1` dal 2, per un totale di `4`, ed in quanto esso dista `4` dal Nodo 1 che aggiunge il fatidico `2`, la via più ovvia peserebbe `6`. Viene scelto `4`).
+
+\section{Risultati Sperimentali e Transcodifica}
+Si è provveduto allo sfoggio del binario, compilato per iterazioni continue ed abortito dopo $3_{sec}$ dall'incessazione delle scoperte IPC (Timeout Convergenza).
+
+\begin{terminal}
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho17$ ./bellman_ford 
+===== Bellman-Ford Algoritmo di Distance Vector Distribuito =====
+Obiettivo: Cammini ottimali da ogni Nodo verso il NODO TARGET (0)
+
+[NODO 0 - TARGET] Distanza zero locale. Segnalo Inizio alle adiacenze.
+[NODO 1] D-V UPDATE! Vett. 999 > 2 (Nuovo hop: Nodo 0). Espando l'onda d'urto...
+[NODO 2] D-V UPDATE! Vett. 999 > 5 (Nuovo hop: Nodo 0). Espando l'onda d'urto...
+[NODO 3] D-V UPDATE! Vett. 999 > 6 (Nuovo hop: Nodo 1). Espando l'onda d'urto...
+[NODO 2] D-V UPDATE! Vett. 5 > 3 (Nuovo hop: Nodo 1). Espando l'onda d'urto...
+[NODO 3] D-V UPDATE! Vett. 6 > 4 (Nuovo hop: Nodo 2). Espando l'onda d'urto...
+
+--- [NODO 2 ESTINTO/CONVERSO] Shortest Path Totale => 3 (via Nodo 1) ---
+--- [NODO 0 ESTINTO/CONVERSO] Shortest Path Totale => 0 (via Nodo 0) ---
+--- [NODO 3 ESTINTO/CONVERSO] Shortest Path Totale => 4 (via Nodo 2) ---
+--- [NODO 1 ESTINTO/CONVERSO] Shortest Path Totale => 2 (via Nodo 0) ---
+
+==== Convergenza Assoluta Raggiunta. Discesa IPC ====
+\end{terminal}
+
+\section{Conclusioni}
+La traccia IPC e i log confermano clamorosamente le nostre predisposizioni da scrivania. All'insorgere del tempo e con l'avanzamento dei cicli, il **NODO 2 e il NODO 3 scartano le rotte precedenti (5 e 6 rispettivamente)** per abbracciare l'Update di vettori asincrono che segnalava la presenza del percorso a costo calcolato `3` e `4`, dimostrando ad amplifero la correttezza del demone C. Le sysfile temporanee di buffer (Pipe multiple) vengono annibillate dolcemente dallo sterrato in chiusura dell'ambiente Unix locale.
+
+\end{document}

@@ -1,0 +1,15 @@
+\frametitle{Risultati sperimentali}
+Testato con successo su terminale locale \texttt{127.0.0.1}.
+  \vspace{0.3cm}
+
+\begin{verbatim}
+--- Connected to Bank Server ---
+BANK> ADD 101 25.50 Ricarica Prepagata
+OK: ADDED 101
+BANK> LIST
+--- TRANSACTION LIST ---
+[101] 25.50 - Ricarica Prepagata
+------------------------
+\end{verbatim}
+
+  Dimostrata anche la stabilità su accessi paralleli inviando in stallo il lock per emulazione. Nessun crash verificato.

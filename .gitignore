@@ -1,0 +1,41 @@
+# Environments
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Data
+data/
+*.zip
+*.tar.gz
+*.csv
+*.txt
+!lotr.txt
+!Relazione_*.txt
+
+# Build Artifacts
+*.o
+*.out
+*.exe
+*.log
+*.aux
+*.toc
+*.listing
+*.bbl
+*.blg
+*.nav
+*.snm
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+hands-on/ho19/data/
+hands-on/ho18/venv/
+hands-on/ho19/venv/

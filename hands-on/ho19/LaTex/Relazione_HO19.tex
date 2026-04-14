@@ -1,0 +1,107 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Massimo Mantineo}
+\fancyhead[C]{Hands-On 19}
+\fancyhead[R]{A.A. 2024/2025}
+\fancyfoot[C]{\thepage}
+
+\title{Relazione Hands-On 19: Federated Learning con Ray.io e PyTorch}
+\author{Massimo Mantineo (Matricola: 541924)}
+\date{Aprile 2026}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduzione}
+L'obiettivo di questo Hands-On è l'implementazione di un sistema di \textbf{Federated Learning (FL)} per la classificazione di immagini del dataset MNIST. A differenza del paradigma tradizionale centralizzato, il Federated Learning permette di addestrare modelli di Machine Learning su dati distribuiti, mantenendo la privacy dei dati locali. 
+
+In questo esperimento, abbiamo utilizzato \textbf{Ray.io} come framework di orchestrazione distribuita e \textbf{PyTorch} per la definizione e l'addestramento del modello neurale.
+
+\section{Stato dell'Arte e Teoria}
+Il Federated Learning si basa sul concetto di portare il calcolo dai dati, invece dei dati al calcolo. Il processo tipico prevede:
+\begin{enumerate}
+    \item Un'entità centrale (\textbf{Aggregator}) che invia i pesi del modello globale ai partecipanti.
+    \item I partecipanti (\textbf{Workers}) che addestrano localmente il modello sui propri dati.
+    \item L'invio degli aggiornamenti (gradienti o pesi) all'Aggregator.
+    \item L'aggregazione degli aggiornamenti tramite algoritmi come il \textbf{Federated Averaging (FedAvg)}.
+\end{enumerate}
+
+L'algoritmo FedAvg calcola la media pesata dei parametri del modello:
+\begin{equation}
+    w_{t+1} = \sum_{k=1}^{K} \frac{n_k}{n} w_{t+1}^k
+\end{equation}
+dove $n_k$ è il numero di esempi del worker $k$ e $n$ il totale degli esempi.
+
+\section{Metodologia e Implementazione}
+Il sistema è stato implementato con 1 Aggregator e 6 Worker distribuiti come \textbf{Ray Actors}.
+
+\subsection{Partizionamento dei Dati}
+Le 60.000 immagini del set di training di MNIST sono state suddivise in modo casuale (\textbf{IID split}) tra i 6 worker, assegnando 10.000 immagini a ciascuno. Ogni worker gestisce il proprio \texttt{DataLoader} locale.
+
+\subsection{Architettura Distribuita}
+\begin{itemize}
+    \item \textbf{FederatedWorker}: Riceve i pesi globali, esegue 1 epoca di training locale e restituisce i pesi aggiornati.
+    \item \textbf{FederatedAggregator}: Coordina i round di comunicazione, esegue l'aggregazione FedAvg e valuta il modello globale su un set di test centrale (10.000 immagini).
+\end{itemize}
+
+\section{Risultati Sperimentali}
+Il sistema è stato testato per 3 round di comunicazione. I log mostrano un rapido incremento dell'accuratezza globale:
+
+\begin{verbatim}
+>>> Initializing Federated Learning with 6 workers...
+>>> Round 1 starting...
+Round 1 - Global Test Accuracy: 92.48%
+>>> Round 2 starting...
+Round 2 - Global Test Accuracy: 95.21%
+>>> Round 3 starting...
+Round 3 - Global Test Accuracy: 96.16%
+Training finished.
+\end{verbatim}
+
+L'accuratezza finale del \textbf{96.16\%} ottenuta in soli 3 round dimostra l'efficacia dell'approccio federato nella convergenza del modello MLP.
+
+\section{Conclusioni}
+L'implementazione ha dimostrato come Ray.io semplifichi drasticamente la gestione di attori distribuiti per compiti di intelligenza artificiale. Il Federated Learning si è rivelato un metodo robusto per l'addestramento distribuito, riuscendo a mantenere prestazioni paragonabili alla versione centralizzata pur mantenendo i dati frammentati su worker indipendenti.
+
+\end{document}
