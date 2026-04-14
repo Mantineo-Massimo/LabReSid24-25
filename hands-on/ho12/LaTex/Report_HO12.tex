@@ -191,6 +191,47 @@ I primi $(N-1)$ thread che effettuano gli accessi andranno tutti rigorosamente p
 Solo l'arrivo dell'ultimo thread sancirà la fine dell'attesa in quanto quest'ultimo innescherà una cascata di \texttt{sem\_post(\&barrier\_sem)} pari al numero di thread fermi ($N-1$).
 
 \subsection{Implementazione Produttore-Consumatore}
+L'architettura del sistema si basa sulla coordinazione di tre semafori per gestire l'accesso concorrente al buffer limitato, evitando situazioni di sovrascrittura o lettura di dati inconsistenti.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2cm,
+        box/.style={rectangle, draw=blue!70, fill=blue!5, thick, minimum width=2.5cm, minimum height=1.2cm, align=center, font=\small\sffamily},
+        buffer/.style={rectangle split, rectangle split parts=5, draw=orange!70, fill=orange!5, thick, minimum width=2cm, font=\tiny\ttfamily},
+        arrow/.style={-Stealth, thick, gray!80}
+    ]
+        % Components
+        \node[box] (prod) {Producers\\(Thread Pool)};
+        \node[buffer, right=of prod] (buf) {Buffer\\(FIFO Queue)
+            \nodepart{two} Slot 0
+            \nodepart{three} Slot 1
+            \nodepart{four} Slot 2
+            \nodepart{five} ...
+        };
+        \node[box, right=of buf] (cons) {Consumers\\(Thread Pool)};
+
+        % Semaphores
+        \node[draw=red!70, fill=red!5, dashed, above=0.5cm of buf, align=center, font=\tiny\itshape] (sem) {
+            \textbf{Semafori di Sincronizzazione:}\\
+            empty\_slots (N)\\
+            filled\_slots (0)\\
+            mutex (1)
+        };
+
+        % Interactions
+        \draw[arrow] (prod) -- node[above, font=\tiny] {put\_item()} (buf);
+        \draw[arrow] (buf) -- node[above, font=\tiny] {get\_item()} (cons);
+        \draw[arrow, <->, red!70] (sem) -- (buf);
+
+        % Labels
+        \node[below=0.1cm of prod, font=\tiny] {sem\_wait(empty\_slots)};
+        \node[below=0.1cm of cons, font=\tiny] {sem\_wait(filled\_slots)};
+    \end{tikzpicture}
+    \caption{Workflow del pattern Produttore-Consumatore con buffer limitato coordinato da semafori.}
+    \label{fig:prod_cons}
+\end{figure}
+
 Il buffer circolare finito è gestito da tre entità di blocco.
 \begin{ccode}[Snippet Esercizio 2: Tre Semafori Coordinati]
 // Sincronizzazione:

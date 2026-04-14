@@ -27,6 +27,11 @@ data/
 *.blg
 *.nav
 *.snm
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.synctex.gz(busy)
 
 # IDEs
 .vscode/

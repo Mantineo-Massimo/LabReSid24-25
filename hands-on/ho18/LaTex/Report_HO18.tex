@@ -188,6 +188,42 @@ Il paradigma MapReduce, reso celebre da Google, si basa su due fasi principali:
 Framework moderni come \textbf{Ray} permettono di implementare tali pattern in modo efficiente, offrendo astrazioni semplici per l'esecuzione remota di funzioni e la gestione delle dipendenze, superando i limiti della libreria standard multiprocess di Python.
 
 \section{Metodologia ed Implementazione}
+L'architettura del sistema si basa sul modello a tre stadi (Map, Shuffle, Reduce) orchestrato da Ray.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.5cm,
+        box/.style={rectangle, draw=blue!70, fill=blue!5, thick, minimum width=2.5cm, minimum height=1cm, align=center, font=\small\sffamily},
+        data/.style={draw=orange!70, fill=orange!5, thick, rectangle, rounded corners, font=\tiny\ttfamily},
+        arrow/.style={-Stealth, thick, gray!80}
+    ]
+        % Stages
+        \node[data] (input) {Input: lotr.txt};
+        \node[box, right=of input] (split) {Splitter\\(Text Chunks)};
+        
+        \node[box, right=of split, yshift=1cm] (map1) {Map Worker 1\\(Word Counts)};
+        \node[box, right=of split, yshift=-1cm] (map2) {Map Worker 2\\(Word Counts)};
+        
+        \node[box, right=2cm of split] (agg) {Global\\Reducer\\(ray.get)};
+        \node[data, right=of agg] (output) {Final Report};
+
+        % Connections
+        \draw[arrow] (input) -- (split);
+        \draw[arrow] (split) -- (map1);
+        \draw[arrow] (split) -- (map2);
+        \draw[arrow] (map1) -- (agg);
+        \draw[arrow] (map2) -- (agg);
+        \draw[arrow] (agg) -- (output);
+
+        % Annotations
+        \node[above=0.1cm of map1, font=\tiny\itshape, color=blue!70] {@ray.remote};
+        \node[above=0.1cm of map2, font=\tiny\itshape, color=blue!70] {@ray.remote};
+    \end{tikzpicture}
+    \caption{Workflow del calcolo distribuito MapReduce orchestrato tramite Ray.io.}
+    \label{fig:mapreduce_flow}
+\end{figure}
+
 L'architettura del sistema prevede:
 \begin{enumerate}
     \item \textbf{Splitting}: Il testo di input (\texttt{lotr.txt}) viene suddiviso in $N$ blocchi.

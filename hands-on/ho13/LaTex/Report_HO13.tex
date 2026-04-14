@@ -187,6 +187,48 @@ Le Variable Condition segnano un passaggio dai lock puramente "esclusivi" (Mutex
 \section{Metodologia ed Implementazione}
 
 \subsection{Simulazione di un Join (\texttt{ex1\_join.c})}
+Il meccanismo di attesa e segnalazione permette di coordinare l'esecuzione di due thread dipendenti senza occupare attivamente la CPU durante l'attesa (attesa passiva).
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.5cm,
+        thread/.style={rectangle, draw=blue!70, fill=blue!5, thick, minimum width=3cm, minimum height=1cm, align=center, font=\small\sffamily},
+        arrow/.style={-Stealth, thick, gray!80},
+        msg/.style={draw=red!70, fill=red!5, thick, rectangle, rounded corners, font=\tiny\ttfamily}
+    ]
+        % Lifelines
+        \draw[thick, gray!50] (0,0) -- (0,-6);
+        \draw[thick, gray!50] (5,0) -- (5,-6);
+        
+        % Nodes
+        \node[thread] at (0,0.5) {THREAD PADRE\\(Master)};
+        \node[thread] at (5,0.5) {THREAD FIGLIO\\(Worker)};
+
+        % Father states
+        \draw[ultra thick, blue!70] (0,-0.5) -- (0,-1.5);
+        \node[left=0.1cm of (0,-1), font=\tiny] {Work};
+        
+        \draw[ultra thick, orange!70] (0,-1.5) -- (0,-4.5);
+        \node[left=0.1cm of (0,-3), font=\tiny, color=orange!80!black] {WAITING (Sleeping)};
+        
+        \draw[ultra thick, blue!70] (0,-4.5) -- (0,-5.5);
+        \node[left=0.1cm of (0,-5), font=\tiny] {Resume Work};
+
+        % Child states
+        \draw[ultra thick, green!70!black] (5,-1.5) -- (5,-4.5);
+        \node[right=0.1cm of (5,-3), font=\tiny] {Performing Task};
+        
+        % Signals
+        \draw[arrow, red, dashed] (0,-1.5) -- node[above, font=\tiny, color=black] {pthread\_cond\_wait()} (5,-1.5);
+        \draw[arrow, red, very thick] (5,-4.5) -- node[above, font=\tiny, color=black] {pthread\_cond\_signal()} (0,-4.5);
+
+        \node[msg] at (2.5, -5.5) {child\_done = 1};
+    \end{tikzpicture}
+    \caption{Diagramma di sequenza della sincronizzazione tramite Condition Variables (Wait/Signal).}
+    \label{fig:cond_var_seq}
+\end{figure}
+
 Questa tipologia di codice mima al 100\% la gestione in background dello scheduler per attendere flussi operativi prima di uscire in un \texttt{return 0;}.
 \begin{ccode}[Snippet Esercizio 1: Padre vs Figlio]
 // T-PADRE: Si blocca se non pronto

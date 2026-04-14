@@ -18,12 +18,12 @@ for i in range(1, 20):
         # Compile Report_HO{i}.tex
         if os.path.exists(new_tex):
             print(f"Compiling {new_tex}...")
-            # Use batchmode to prevent stuck prompts, and timeout just in case
+            # Use batchmode to prevent stuck prompts, and increased timeout
             try:
                 subprocess.run(
                     ["latexmk", "-pdf", "-interaction=batchmode", f"Report_HO{i}.tex"],
                     cwd=tex_dir,
-                    timeout=30,
+                    timeout=120,
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL
                 )
@@ -32,6 +32,17 @@ for i in range(1, 20):
             except Exception as e:
                 print(f"Error compiling {new_tex}: {e}")
             
+            # Verify .toc file
+            toc_file = os.path.join(tex_dir, f"Report_HO{i}.toc")
+            if os.path.exists(toc_file):
+                size = os.path.getsize(toc_file)
+                if size > 0:
+                    print(f"Index generated for HO{i} ({size} bytes)")
+                else:
+                    print(f"WARNING: Index empty for HO{i}")
+            else:
+                print(f"WARNING: Index NOT generated for HO{i}")
+
             # The compile should create ../Report_HO{i}.pdf because of .latexmkrc
             # but if it creates it in LaTex/ directory, we move it
             compiled_pdf = os.path.join(tex_dir, f"Report_HO{i}.pdf")

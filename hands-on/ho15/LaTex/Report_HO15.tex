@@ -187,6 +187,33 @@ A livello concettuale, le IPC Pipelines vengono comunemente introdotte da Ritchi
 \subsection{Topologia ed Avvio}
 Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **Grafo a Diamante di 4 Nodi**: L'Agent 0 (Iniziatore) è connesso asimmetricamente ad {1, 2}. Gli Agent 1 e 2 si rivolgono entrambi al nodo di base {3}.
 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2cm,
+        agent/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, font=\small\bfseries},
+        fifo/.style={rectangle, draw=orange!70, fill=orange!5, dashed, font=\tiny\ttfamily},
+        arrow/.style={-Stealth, thick, blue!70}
+    ]
+        % Nodes
+        \node[agent] (a0) {Agente 0\\(Init)};
+        \node[agent, below left=of a0] (a1) {Agente 1};
+        \node[agent, below right=of a0] (a2) {Agente 2};
+        \node[agent, below=3.5cm of a0] (a3) {Agente 3};
+
+        % Edges (FIFOs)
+        \draw[arrow] (a0) -- node[above left, font=\tiny, color=black] {/tmp/fifo\_0\_1} (a1);
+        \draw[arrow] (a0) -- node[above right, font=\tiny, color=black] {/tmp/fifo\_0\_2} (a2);
+        \draw[arrow] (a1) -- node[below left, font=\tiny, color=black] {/tmp/fifo\_1\_3} (a3);
+        \draw[arrow] (a2) -- node[below right, font=\tiny, color=black] {/tmp/fifo\_2\_3} (a3);
+        
+        % Annotations
+        \node[fifo, right=0.5cm of a2, align=center] {Inter-Process\\Communication\\via Named Pipes};
+    \end{tikzpicture}
+    \caption{Topologia distribuita a diamante per la simulazione dell'algoritmo di Flooding.}
+    \label{fig:flooding_topology}
+\end{figure}
+
 Dal parent \texttt{main()} del C, il master lancia ciclicamente la chiamata di Sistema \texttt{mkfifo("/tmp/fifo\_src\_dst", 0666)} generando i tubi direzionali:
 \begin{ccode}[Creazione Dinamica]
 for(int i = 0; i < MAX_AGENTS; i++) {

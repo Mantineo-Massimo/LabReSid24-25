@@ -185,6 +185,47 @@ La pipeline di compilazione moderna e la gestione dei simboli sono i pilastri de
 \section{Metodologia ed Implementazione}
 L'implementazione si focalizza sull'uso di tool di introspezione binaria nel contesto di un Makefile strutturato.
 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.5cm,
+        file/.style={rectangle, draw=gray!80, fill=gray!5, thick, minimum width=2cm, minimum height=0.8cm, font=\tiny\ttfamily},
+        tool/.style={draw=blue!70, fill=blue!5, thick, rectangle, rounded corners, minimum width=2.5cm, font=\small\sffamily},
+        arrow/.style={-Stealth, thick, gray!80}
+    ]
+        % Files
+        \node[file] (c1) {main.c};
+        \node[file, below=0.5cm of c1] (c2) {symbols.c};
+        
+        % Compiler
+        \node[tool, right=2cm of c1, yshift=-0.6cm] (gcc) {GCC (Compiler)};
+        
+        % Objects
+        \node[file, right=2cm of gcc] (o1) {main.o};
+        \node[file, below=0.5cm of o1] (o2) {symbols.o};
+        
+        % Linker
+        \node[tool, right=2cm of o1, yshift=-0.6cm] (ld) {LD (Linker)};
+        
+        % Executable
+        \node[file, right=2cm of ld, fill=green!10, draw=green!70] (exe) {ELF Executable\\(Symbol Table)};
+
+        % Connections
+        \draw[arrow] (c1) -- (gcc);
+        \draw[arrow] (c2) -- (gcc);
+        \draw[arrow] (gcc) -- (o1);
+        \draw[arrow] (gcc) |- (o2);
+        \draw[arrow] (o1) -- (ld);
+        \draw[arrow] (o2) -- (ld);
+        \draw[arrow] (ld) -- (exe);
+        
+        % Tool labels
+        \node[above=0.1cm of ld, font=\tiny, color=red!70] {nm / readelf};
+    \end{tikzpicture}
+    \caption{Pipeline di trasformazione dal codice sorgente al binario ELF con gestione della Tabella dei Simboli.}
+    \label{fig:compilation_pipeline}
+\end{figure}
+
 \subsection{Analisi dei Simboli con \texttt{nm}}
 È stata creata un'architettura multi-file (\texttt{main.c}, \texttt{ex1_symbols.c}) per osservare il comportamento dei simboli \texttt{U} (Undefined) e \texttt{T} (Text).
 \begin{terminal}[Analisi Tabella Simboli]

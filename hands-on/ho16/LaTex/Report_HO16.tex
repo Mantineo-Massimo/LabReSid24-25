@@ -196,6 +196,39 @@ Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti dispost
     \item \textbf{Se UID Entrante == Mio}: Sono IL LEADER eletto senza ombra di dubbio!
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.5cm,
+        agent/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, font=\small\bfseries},
+        arrow/.style={-Stealth, thick, blue!70, bend left=20}
+    ]
+        % Nodes in a circle
+        \node[agent] (a0) at (90:2.5) {Node 0\\ID: 12};
+        \node[agent] (a1) at (18:2.5) {Node 1\\ID: 5};
+        \node[agent] (a2) at (306:2.5) {Node 2\\ID: 23};
+        \node[agent] (a3) at (234:2.5) {Node 3\\ID: 8};
+        \node[agent] (a4) at (162:2.5) {Node 4\\ID: 15};
+
+        % Ring Arcs
+        \draw[arrow] (a0) to node[right, font=\tiny, color=black] {UID:12} (a1);
+        \draw[arrow] (a1) to node[below, font=\tiny, color=black] {UID:12} (a2);
+        \draw[arrow] (a2) to node[left, font=\tiny, color=black] {UID:23} (a3);
+        \draw[arrow] (a3) to node[above, font=\tiny, color=black] {UID:23} (a4);
+        \draw[arrow] (a4) to node[right, font=\tiny, color=black] {UID:23} (a0);
+        
+        % Legend
+        \node[draw=orange!70, fill=orange!5, dashed, below=3.5cm of a0, font=\tiny\itshape, align=center] {
+            \textbf{LCR Process:}\\
+            1. Higher ID propagates\\
+            2. Lower ID is dropped\\
+            3. Self-ID receipt → LEADER
+        };
+    \end{tikzpicture}
+    \caption{Protocollo LCR su topologia a ring unidirezionale: l'ID 23 emerge come vincitore.}
+    \label{fig:leader_election_ring}
+\end{figure}
+
 \section{Metodologia ed Implementazione}
 
 Nel codice nativo in linguaggio C, \texttt{lcr.c} genera 5 FIFO Unidirezionali ($0 \rightarrow 1, 1 \rightarrow 2, \dots$) avvalendosi di \texttt{fork} per istanziare i componenti. Inoltre inserisce dinamicamente una riga di codice in sospensiva \texttt{sleep(1)} dopo la conversione \texttt{sscanf} interna al ciclo d'ascolto per facilitare l'occhio umano alla visualizzazione dell'elezione real-time.

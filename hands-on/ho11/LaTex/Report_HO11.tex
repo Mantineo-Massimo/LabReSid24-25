@@ -189,6 +189,43 @@ Le problematiche sollevate nell'Hands-On 11 costituiscono le fondamenta della pr
 \section{Metodologia ed Implementazione}
 Per coprire gli obiettivi prestabiliti, l'ecosistema del laboratorio fa uso della libreria \texttt{<pthread.h>} nello standerd POSIX e \texttt{<semaphore.h>} per le varianti col semaforo.
 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1cm and 2cm,
+        thread/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1cm, font=\tiny\bfseries},
+        resource/.style={rectangle, draw=green!70, fill=green!5, thick, minimum width=1.5cm, minimum height=1cm, font=\tiny\bfseries},
+        lock/.style={draw=red!70, fill=red!5, thick, shape=rectangle, rounded corners, minimum width=1.2cm, font=\tiny\itshape},
+        arrow/.style={-Stealth, thick, gray!80}
+    ]
+        % Mutex Side
+        \node[resource] (res1) {Shared Resource};
+        \node[lock, above=0.3cm of res1] (mutex) {Mutex Lock};
+        \node[thread, left=of mutex] (t1) {Thread A};
+        \node[thread, below=0.5cm of t1] (t2) {Thread B};
+        
+        \draw[arrow] (t1) -- node[above, font=\tiny] {Lock} (mutex);
+        \draw[arrow, dashed] (t2) -- node[below, font=\tiny] {Waiting} (mutex);
+        
+        % Semaphore Side
+        \node[resource, right=5cm of res1] (res_pool) {Resource Pool (N=2)};
+        \node[lock, above=0.3cm of res_pool] (sem) {Semaphore (Count=1)};
+        \node[thread, left=1cm of sem] (t3) {Thread C};
+        \node[thread, below=0.5cm of t3] (t4) {Thread D};
+        \node[thread, below=0.5cm of t4] (t5) {Thread E};
+        
+        \draw[arrow] (t3) -- node[above, font=\tiny] {Wait} (sem);
+        \draw[arrow] (t4) -- node[below, font=\tiny] {Wait} (sem);
+        \draw[arrow, dashed] (t5) -- node[below, font=\tiny] {Blocked} (sem);
+
+        % Labels
+        \node[above=0.8cm of mutex, font=\bfseries\small] {MUTUAL EXCLUSION};
+        \node[above=0.8cm of sem, font=\bfseries\small] {COUNTING SEMAPHORE};
+    \end{tikzpicture}
+    \caption{Differenza concettuale tra Mutex (Esecuzione Esclusiva) e Semaforo (Accesso Limitato a pool).}
+    \label{fig:sync_mechanisms}
+\end{figure}
+
 \subsection{Race Condition Senza Sincronizzazione}
 Nel primissimo passo viene volutamente violata la sincronizzazione. Il \texttt{shared\_counter++} viene eseguito da 10 thread 10.000 volte ciascuno.
 \begin{ccode}[Snippet Esercizio 1: Assenza di controllo in Sezione Critica]

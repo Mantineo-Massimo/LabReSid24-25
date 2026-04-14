@@ -191,16 +191,40 @@ Ogni nodo \textit{riceve} in asincrono messaggi in buffer dalla propria FIFO, de
 \section{Metodologia ed Implementazione}
 
 Siccome il grafo visivo manca all'appello, optiamo per disporre una trincea a \textbf{Cost Matrix Asimmetrica} per 4 Nodi:
-\begin{ccode}
-// Single-Source cost_matrix
-// Node 0 is the Target.
-int cost_matrix[NUM_NODES][NUM_NODES] = {
-    {0, 2, 5, INF}, // Edge out dal nodo 0
-    {2, 0, 1, 4},   // Edge out dal nodo 1
-    {5, 1, 0, 1},   // Edge out dal nodo 2
-    {INF, 4, 1, 0}  // Edge out dal nodo 3
-};
-\end{ccode}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.5cm,
+        router/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, font=\small\bfseries},
+        edge/.style={draw=gray!80, thick},
+        weight/.style={font=\tiny, color=red!70!black, fill=white, inner sep=1pt}
+    ]
+        % Nodes
+        \node[router] (r0) {Nodo 0\\(Target)};
+        \node[router, right=of r0] (r1) {Nodo 1};
+        \node[router, below=of r1] (r2) {Nodo 2};
+        \node[router, below=of r0] (r3) {Nodo 3};
+
+        % Edges with weights
+        \draw[edge] (r0) -- node[above, weight] {2} (r1);
+        \draw[edge] (r0) -- node[left, weight] {5} (r2);
+        \draw[edge] (r1) -- node[right, weight] {1} (r2);
+        \draw[edge] (r1) -- node[below left, weight] {4} (r3);
+        \draw[edge] (r2) -- node[below, weight] {1} (r3);
+
+        % Annotations for DV Updates
+        \node[draw=orange!70, fill=orange!5, dashed, right=0.5cm of r1, align=left, font=\tiny\itshape] {
+            \textbf{Convergenza DV:}\\
+            1. $0 \rightarrow 1 = 2$\\
+            2. $0 \rightarrow 2 = \min(5, 2+1) = \mathbf{3}$\\
+            3. $0 \rightarrow 3 = \min(2+4, 3+1) = \mathbf{4}$
+        };
+    \end{tikzpicture}
+    \caption{Topologia del grafo pesato e calcolo iterativo dei cammini minimi (Distance-Vector).}
+    \label{fig:bellman_ford_graph}
+\end{figure}
+
 Abbiamo programmato volontariamente un trabocchetto: benché esista l'arco diretto Nodo 2 $\rightarrow$ Target 0 al costo di asticella `5`, la somma dei pesi passando attivamente per Nodo 1 costa solamente `3` ($1+2$). Costringiamo così in maniera fittizia l'algoritmo a ricalcolare le metriche ignorando l'arco apparentemente più palese (Il nodo 3 dista `1` dal 2, per un totale di `4`, ed in quanto esso dista `4` dal Nodo 1 che aggiunge il fatidico `2`, la via più ovvia peserebbe `6`. Viene scelto `4`).
 
 
