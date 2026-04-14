@@ -1,0 +1,233 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={Grafi di Precedenza e Parallelismo},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 10},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 10
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Report: Grafi di Precedenza e Parallelismo\\
+\large (Hands-On 10)}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 10:}\\
+    Grafi di Precedenza e Parallelismo\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Problem Statement}
+L'Hands-On 10 (HO10) affronta la formalizzazione matematica e l'implementazione software della scomposizione di un calcolo algebrico tramite i **Grafi di Precedenza**. L'obiettivo è risolvere l'equazione $y = (2 * 6) + (1 + 4) * (5 - 2)$ identificando il massimo grado di parallelismo estraibile. Il sistema deve garantire che le operazioni dipendenti vengano eseguite solo dopo il completamento dei propri predecessori, confrontando l'efficacia della sincronizzazione deterministica in linguaggio C rispetto al modello interpretato di Python.
+
+\section{Stato dell'Arte}
+La progettazione di algoritmi paralleli si basa su criteri formali di indipendenza e limiti teorici di scalabilità.
+\begin{itemize}
+    \item \textbf{Condizioni di Bernstein}: Due task $T_1$ e $T_2$ possono essere eseguiti in parallelo se l'insieme di lettura di uno non interseca l'insieme di scrittura dell'altro, e i loro insiemi di scrittura sono disgiunti.
+    \item \textbf{Legge di Amdahl}: Il miglioramento prestazionale di un programma tramite la parallelizzazione è limitato dalla frazione di codice che deve necessariamente essere eseguita in modo sequenziale.
+    \item \textbf{Python GIL (Global Interpreter Lock)}: A differenza del C, dove i thread scalano linearmente sui core, Python introduce un lock globale che impedisce il vero parallelismo multi-core per task CPU-bound, rendendo il threading utile principalmente per l'I/O asincrono.
+\end{itemize}
+
+\section{Metodologia ed Implementazione}
+L'approccio prevede la mappatura dell'equazione su un grafo orientato aciclico (DAG).
+
+\subsection{Analisi del Grafo (DAG)}
+L'espressione viene scomposta in tre livelli di esecuzione ($L_0, L_1, L_2$):
+\begin{itemize}
+    \item \textbf{Tasks Indipendenti ($L_0$)}: $A=2*6$, $B=1+4$, $C=5-2$.
+    \item \textbf{Tasks Dipendenti ($L_1$)}: $D=B*C$ (Richiede il completamento di B e C).
+    \item \textbf{Risultato Finale ($L_2$)}: $y=A+D$.
+\end{itemize}
+
+\subsection{Sincronizzazione in C}
+Viene utilizzata la libreria \texttt{pthread} per gestire il ciclo di vita dei task. Il recupero dei valori avviene tramite il casting del puntatore di ritorno nella \texttt{pthread_join}.
+\begin{ccode}[Snippet Sincronizzazione Livelli]
+pthread_create(&tA, NULL, task_A, NULL);
+pthread_create(&tB, NULL, task_B, NULL);
+pthread_create(&tC, NULL, task_C, NULL);
+// Barriera di sincronizzazione manuale
+pthread_join(tB, (void**)&resB);
+pthread_join(tC, (void**)&resC);
+// Ora posso lanciare il task D (Livello 1)
+\end{ccode}
+
+
+\subsection{Istruzioni di Esecuzione}
+Compilazione del risolutore di grafi:
+\begin{terminal}[Build]
+$ gcc graph_solver.c -o solver
+\end{terminal}
+
+\section{Risultati}
+La validazione è stata condotta verificando l'integrità del calcolo e l'ordine di esecuzione dei thread.
+
+\subsection{Validazione Numerica}
+Entrambe le implementazioni (C e Python) hanno restituito con successo il valore atteso $y = 27$. I log di sistema confermano che il thread responsabile dell'operazione $y = A + D$ è rimasto in stato di \textit{waiting} finché i predecessori non hanno rilasciato le risorse.
+
+\subsection{Confronto Prestazionale}
+L'ispezione con \texttt{htop} ha mostrato un utilizzo bilanciato di 3 core durante la fase $L_0$ in C, mentre in Python l'overhead del context switching per il GIL ha limitato l'efficienza computazionale effettiva.
+
+\section{Conclusioni e Sviluppi Futuri}
+L'Hands-On 10 ha dimostrato che la scomposizione in grafi di precedenza è il metodo più rigoroso per strutturare la computazione parallela, garantendo la coerenza dei dati (\textit{data consistency}) in sistemi distribuiti.
+
+\noindent \textbf{Sviluppi futuri:}
+\begin{itemize}
+    \item \textbf{Task-Based Parallelism}: Migrazione verso framework come Intel TBB (\textit{Threading Building Blocks}) per la gestione automatica delle dipendenze del grafo.
+    \item \textbf{DAG Schedulers}: Implementazione di uno scheduler dinamico capace di mappare grafi di precedenza complessi su cluster di macchine eterogenee (es. Spark o Dask).
+\end{itemize}
+
+\end{document}

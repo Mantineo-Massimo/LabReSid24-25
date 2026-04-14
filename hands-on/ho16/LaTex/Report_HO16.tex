@@ -1,0 +1,277 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={HO16: Leader Election},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 16},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.symbols}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 16
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Report (HO16)\\
+\large Leader Election Algoritmica via Processi IPC}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 16:}\\
+    Elezione del Leader IPC (FloodMax e LCR)\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Problem Statement}
+L'obiettivo di quest'esperienza risiede nella necessità di gestire dinamicamente network anonimi (o semi-anonimi) allo scopo di individuare tra N Nodi di eguale importanza colui che andrà ad assumere le vesti di \textbf{Leader del Grafo}.
+Come mezzo di propagazione dei pacchetti manteniamo l'ambiente POSIX asincrono testato per l'Hands-On 15: un File System su cui vengono mappati pseudo-device esposti tramite la Syscall \texttt{mkfifo}. Questa architettura consente di avere N Processi totalmente isolati in RAM (nessuna locazione globale in comune) che concorrono all'elezione passandosi Stringhe lungo l'anello delle pipe.
+
+\section{Stato dell'Arte}
+Abbiamo implementato ben due varianti protocollari, in base alle informazioni di topologia:
+
+\subsection{Algoritmo FloodMax (Grafo generico)}
+Il \textbf{FloodMax} è una variante dell'algoritmo Flood studiata per grafi ciclici non ordinati, in cui la dimensione diametrale della Rete (ossia il cammino minimo più lungo tra ogni coppia) sia un fattore noto. 
+Si fonda su una *Sincronicità per Round*:
+\begin{itemize}
+    \item L'agente inizializza il `max\_uid` salvando in un buffer il suo UID Univoco.
+    \item Ad ogni giro di orologio, l'agente emette il `max\_uid` a tutti i suoi vicini uscenti ed entra in uno stato bloccante attendendo la lettura da tutti i suoi archi entranti.
+    \item Se dalle pipe riceve un valore più alto del suo, va a sovrascrivere il `max\_uid`.
+    \item Allo scadere dell'intero parametro diametrale tutti gli agenti nel sistema avranno lo stesso esatto valore nel `max\_uid`. Se quello equivaleva originariamente al proprio UID Univoco nativo si incorona "Leader".
+\end{itemize}
+
+\subsection{Algoritmo LeLann-Chang-Roberts (Grafo Anello Unidirezionale)}
+Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti disposte a corona in maniera unidirezionale. Non necessita di round bloccanti né si cura del diametro del grafo. La state transition function è rigorosa all'esame dei pacchetti asincroni "volanti":
+\begin{itemize}
+    \item \textbf{Se UID Entrante > Mio}: Inoltra UID Entrante ed esci dalla competizione.
+    \item \textbf{Se UID Entrante < Mio}: Scarta il messaggio (purga l'infezione, impedendo loop lenti).
+    \item \textbf{Se UID Entrante == Mio}: Sono IL LEADER eletto senza ombra di dubbio!
+\end{itemize}
+
+\section{Metodologia ed Implementazione}
+
+Nel codice nativo in linguaggio C, \texttt{lcr.c} genera 5 FIFO Unidirezionali ($0 \rightarrow 1, 1 \rightarrow 2, \dots$) avvalendosi di \texttt{fork} per istanziare i componenti. Inoltre inserisce dinamicamente una riga di codice in sospensiva \texttt{sleep(1)} dopo la conversione \texttt{sscanf} interna al ciclo d'ascolto per facilitare l'occhio umano alla visualizzazione dell'elezione real-time.
+
+\begin{ccode}[Stralcio Regole LCR]
+if (recv_uid > my_uid) {
+    write(fd_out, buf, strlen(buf)+1); // Inoltro e divento passivo.
+    is_participant = 0;
+} else if (recv_uid < my_uid) {
+    // Scarto
+} else {
+    // Il mio token non e' stato decapitato ed e' tornato a me!
+    sprintf(msg, "LEADER:%d", my_uid);
+    write(fd_out, msg, strlen(msg)+1);
+}
+\end{ccode}
+
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
+\section{Risultati}
+Invocando la compilazione nativa globale `make all`, le prove emettono outputs teoricamente accurati.
+
+\subsection{Output FloodMax \textit{(UID Vincente Test = 50)}}
+\begin{terminal}[Algoritmo di Elezione LCR - Risultati]
+--- FloodMax Algorithm (Generic Graph diam=2) ---
+
+[NODO 0] ROUND 1: Mio Max= 10. Invio ai vicini...
+[NODO 1] ROUND 1: Mio Max= 50. Invio ai vicini...
+[NODO 2] ROUND 1: Mio Max= 20. Invio ai vicini...
+[NODO 3] ROUND 1: Mio Max= 30. Invio ai vicini...
+[NODO 3] ROUND 2: Mio Max= 50. Invio ai vicini...
+[NODO 2] ROUND 2: Mio Max= 30. Invio ai vicini...
+[NODO 0] ROUND 2: Mio Max= 50. Invio ai vicini...
+[NODO 1] ROUND 2: Mio Max= 50. Invio ai vicini...
+[NODO 2] E' emerso un Leader globale con UID 50. Io mi arrendo.
+[NODO 0] E' emerso un Leader globale con UID 50. Io mi arrendo.
+[NODO 3] E' emerso un Leader globale con UID 50. Io mi arrendo.
+>>> [NODO 1] SONO IL LEADER! (UID 50) <<<
+\end{terminal}
+Risultato garantito nei tempi stabiliti: due round netti per eleggere correttamente l'agente detentore della chiave d'ordine massimale `UID 50`.
+
+\subsection{Output LCR \textit{(UID Vincente Test = 23)}}
+\begin{terminal}[Algoritmo di Elezione Bully - Risultati]
+--- LCR Algorithm (Ring of 5 Nodes) ---
+
+[NODO 0 - UID 12] Inizia. Invia 'UID:12' a Nodo 1
+[NODO 1 - UID 5] Inizia. Invia 'UID:5' a Nodo 2
+[NODO 2 - UID 23] Inizia. Invia 'UID:23' a Nodo 3
+[NODO 3 - UID 8] Inizia. Invia 'UID:8' a Nodo 4
+[NODO 4 - UID 15] Inizia. Invia 'UID:15' a Nodo 0
+[NODO 1 - UID 5] Ricevuto UID 12 MAGGIORE. Inoltro e divento passivo.
+[NODO 2 - UID 23] Ricevuto UID 5 MINORE. Scarto.
+[NODO 3 - UID 8] Ricevuto UID 23 MAGGIORE. Inoltro e divento passivo.
+[NODO 4 - UID 15] Ricevuto UID 8 MINORE. Scarto.
+[NODO 0 - UID 12] Ricevuto UID 15 MAGGIORE. Inoltro e divento passivo.
+[NODO 2 - UID 23] Ricevuto UID 12 MINORE. Scarto.
+[NODO 4 - UID 15] Ricevuto UID 23 MAGGIORE. Inoltro e divento passivo.
+[NODO 1 - UID 5] Ricevuto UID 15 MAGGIORE. Inoltro e divento passivo.
+[NODO 0 - UID 12] Ricevuto UID 23 MAGGIORE. Inoltro e divento passivo.
+[NODO 2 - UID 23] Ricevuto UID 15 MINORE. Scarto.
+>>> [NODO 2 - UID 23] HO RICEVUTO IL MIO UID! DIVENTO LEADER! <<<
+[NODO 3 - UID 8] Acclamazione ricevuta! Leader e' 23. Inoltro e TERMINO.
+[NODO 4 - UID 15] Acclamazione ricevuta! Leader e' 23. Inoltro e TERMINO.
+[NODO 0 - UID 12] Acclamazione ricevuta! Leader e' 23. Inoltro e TERMINO.
+[NODO 1 - UID 5] Acclamazione ricevuta! Leader e' 23. Inoltro e TERMINO.
+[NODO 2 - UID 23] L'annuncio LEADER ha fatto il giro. TERMINO.
+\end{terminal}
+La chiusura a scarto è immacolata. L'UID asintoticamente più elevato era noto fin dall'inizio all'occhio clinico umano, ed una singola passata circolare è bastata allo script per terminare trionfante spezzando il Ring e ripulendo i file allocati in memoria virtuale temporanea.
+
+\section{Conclusioni e Sviluppi Futuri}
+Gli algoritmi studiati si applicano egregiamente all'emulazione IPC di Linux. Seppur originati nella teoria delle Reti Geografiche Distribuite a Commutazione di Pacchetto, si applicano identicamente a microstrutture informatiche parallele interne ad una CPU su ambienti Cloud.
+
+\end{document}

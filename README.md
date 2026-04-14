@@ -17,7 +17,7 @@ Repository del corso di **Laboratorio di Reti e Sistemi Distribuiti** con gli Ha
 Il materiale è organizzato cronologicamente nella cartella `hands-on/`. Ogni cartella contiene:
 *   Il codice sorgente (`.c`, `.py`, `.sh`).
 *   Un `Makefile` per la compilazione automatica.
-*   Una relazione tecnica dettagliata in formato **PDF**.
+*   Un report tecnico dettagliato in formato **PDF**.
 
 ### Indice degli Hands-On
 

@@ -1,0 +1,307 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={MidTerm HO14: Sistema Bancario TCP},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 14},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.symbols}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 14
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Report MidTerm (HO14)\\
+\large Sistema Bancario Multithread TCP}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 14 (MidTerm):}\\
+    Sviluppo di un Sistema Bancario TCP Multithread\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Problem Statement}
+Il MidTerm (Hands-On 14) riunisce ed eleva le competenze acquisite operando finora con i Socket Berckley e con le astrazioni della libreria \texttt{Pthreads}. La richiesta principale è l'implementazione in linguaggio C di un \textbf{Sistema Bancario} minimale, in grado di gestire un correntista che invia comandi CRUD asincroni da molteplici istanti d'accesso (Terminali differenti, App, E-banking sportello).
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.2cm,
+        client/.style={rectangle, draw=blue!70, fill=blue!5, thick, minimum width=2.5cm, minimum height=0.8cm, font=\small\sffamily},
+        server/.style={rectangle, draw=red!70, fill=red!5, thick, minimum width=4cm, minimum height=1.5cm, align=center, font=\bfseries\sffamily},
+        db/.style={cylinder, draw=orange!70, fill=orange!5, thick, shape border rotate=90, minimum width=2cm, minimum height=2cm, font=\small\sffamily},
+        arrow/.style={-Stealth, thick, gray!80}
+    ]
+        % Clients
+        \node[client] (c1) {Terminale};
+        \node[client, below=0.3cm of c1] (c2) {App Mobile};
+        \node[client, below=0.3cm of c2] (c3) {Web Banking};
+
+        % Server
+        \node[server, right=3cm of c2] (serv) {BANCOMAT SERVER\\(TCP Multithreaded)};
+
+        % Database
+        \node[db, right=3cm of serv] (database) {Account\\Balances};
+
+        % Connections
+        \draw[arrow] (c1.east) -- (serv.north west);
+        \draw[arrow] (c2.east) -- (serv.west);
+        \draw[arrow] (c3.east) -- (serv.south west);
+        
+        \draw[arrow, <->, orange!70, very thick] (serv) -- node[above, font=\tiny, color=black] {Thread-Safe Access} (database);
+        
+        \node[below=0.1cm of serv, font=\itshape\tiny] {Mutex Protected Resources};
+    \end{tikzpicture}
+    \caption{Architettura del Sistema Bancario Distribuito Multi-Client.}
+    \label{fig:banking_arch}
+\end{figure}
+
+Il sistema si fonda su un'architettura **Client-Server TCP** e prevede limitatori rigorosi per la concorrenza (10 Threads), più protezioni di memoria contro la \textit{Race Condition} che andrebbe a distruggere la congruenza dell'estratto conto.
+
+\section{Stato dell'Arte}
+Architetture come quella proposta si pongono alla base dei moderni layer di accesso Cloud.
+\begin{itemize}
+    \item \textbf{TCP Connection-Oriented}: A differenza dell'UDP (Connectionless), la TCP Handshake assicura che il traffico bancario sia controllato, privo di perdita pacchetti (\textit{Acknowledgment}) ed in corretto ordine seriale.
+    \item \textbf{Gestione Demultiplexer-Worker}: Il design pattern adottato è quello \textit{One-Thread-Per-Connection}. Il \texttt{main()} accetta pacchetti SYN, istanzia la socket e ne \textit{esporta} il File Descriptor allocando un Worker Thread figlio staccato (Detached).
+    \item \textbf{Critical Section}: Le operazioni di bilanciamento conto (Lettura-Modifica-Scrittura) non sono atomiche ai cicli di clock. Il DB (simulato) sarà interamente protetto tramite il costrutto \texttt{pthread\_mutex\_t}.
+\end{itemize}
+
+\section{Metodologia ed Implementazione}
+
+\subsection{Progettazione del Database}
+La struttura \texttt{Transaction} immagazzina l'ID, la causale e l'importo. Un array \texttt{db[MAX\_RECORDS]} simula la tabella centrale di archiviazione in backend. La discriminante principale è lo stato logico di esistenza.
+\begin{ccode}[Struttura Transazione]
+typedef struct {
+    int id;
+    float amount;
+    char reason[256];
+    int active;
+} Transaction;
+\end{ccode}
+
+\subsection{Protezione Logica e Limitazione Server}
+Per obbedire al vincolo "Al massimo 10 thread", abbiamo implementato un semaforo limitante pre-accept:
+\begin{ccode}[Limitatore di traffico Server]
+// Inizializzato a MAX_NUM (10)
+sem_wait(&thread_limiter); 
+client_sock = accept(server_sock, ...);
+// Viene passata la richiesta a pthread_create
+\end{ccode}
+Ogniqualvolta una richiesta accede al DB, acquisisce un \texttt{pthread\_mutex\_lock(\&db\_lock)}. Se è un inserzione (\texttt{ADD}), scansiona i duplicati di ID per prevenire collisioni logiche. Lo stream testuale inviato dai socket viene parsate comodamente tramite \texttt{sscanf}.
+
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
+\section{Risultati}
+Innescando il demone server ed aprendo il client tramite l'eseguibile \texttt{./client}, la suite risponde correttamente con l'estratto CRUD implementato:
+\begin{terminal}[Esecuzione Client e Server RPC]
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho14$ ./client
+--- Connected to Bank Server ---
+Available commands:
+  ADD <id> <amount> <reason>
+  UPDATE <id> <amount> <reason>
+  DELETE <id>
+  LIST
+  QUIT
+BANK> ADD 1 1500.00 Stipendio Mese Marzo
+OK: ADDED 1
+BANK> ADD 2 55.40 Rimborso Pizza
+OK: ADDED 2
+BANK> LIST
+--- TRANSACTION LIST ---
+[1] 1500.00 - Stipendio Mese Marzo
+[2] 55.40 - Rimborso Pizza
+------------------------
+BANK> UPDATE 2 -20.00 Storno Parziale
+OK: UPDATED 2
+BANK> DELETE 1
+OK: DELETED 1
+BANK> LIST
+--- TRANSACTION LIST ---
+[2] -20.00 - Storno Parziale
+------------------------
+BANK> QUIT
+\end{terminal}
+L'architettura garantisce una stabilità duratura. La chiusura dell'innesco `client` deallocherà silenziosamente il file descriptor riconsegnando un token libero al \texttt{thread\_limiter}.
+
+\subsection{Analisi di Rete (Wireshark)}
+I test condotti sull'interfaccia di Loopback confermano a livello ISO/OSI il corretto funzionamento dell'inizializzazione Client/Server.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{ho14/ho14_wireshark_rpc.png}
+    \caption{Cattura Wireshark: TCP 3-Way Handshake, Invio Dati (PSH) e Teardown}
+\end{figure}
+
+Come richiesto dal tracciato teorico, si osservano chiaramente le tre iterazioni fondamentali gestite dallo strato TCP:
+1. L'avvio con l'Handshake a tre vie (\texttt{[SYN]}, \texttt{[SYN, ACK]} da parte del server, e l'ultimo \texttt{[ACK]}) che instaura il tunnel virtuale sicuro.
+2. L'invio bidirezionale del payload mediante pacchetti identificati dal flag \texttt{[PSH, ACK]}, dove si cela l'operazione \texttt{ADD} inviata in chiaro.
+3. Lo smantellamento concordato alla pressione del \texttt{QUIT} pilotato dal flag \texttt{[FIN, ACK]}.
+
+
+\section{Conclusioni e Sviluppi Futuri}
+A un livello di Proof-Of-Concept, la gestione è completamente coerente: non permette transazioni duplici, non permette cancellazioni inesatte e parallelizza correttamente client multipli.
+
+\noindent \textbf{Sviluppi futuri ideali:}
+\begin{itemize}
+    \item \textbf{DB Storage Persistente}: Abbandono dell'array per delegare salvataggi espliciti su file \texttt{.txt} o database relazionali veri e propri (PostgreSQL, SQLite), così il riavvio del server non annienta le operazioni precedenti.
+    \item \textbf{Read-Write Locks}: Utilizzo di \texttt{pthread\_rwlock\_t} al posto del grezzo mutex per far sì che molteplici chiamate \texttt{LIST} possano leggere senza bloccarsi vicendevolmente nel caso di estremo traffico in sola visualizzazione.
+\end{itemize}
+
+\end{document}

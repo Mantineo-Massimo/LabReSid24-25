@@ -1,0 +1,261 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={HO15: Flooding con FIFO},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 15},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.symbols}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 15
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Report (HO15)\\
+\large Algoritmo Generico di Flooding via FIFO / IPC Processes}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 15:}\\
+    Implementazione del Flooding Algorithm su Processi POSIX\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Problem Statement}
+L'Hands-On 15 richiede la dismissione dei costrutti standard d'Ateneo tramite \texttt{Pthreads} o i classici Web Sockets TCP, allo scopo di studiare la comunicazione Inter-Processo locale di Linux (IPC) tramite le \textbf{Named Pipes} (conosciute come FIFO). L'applicazione designata è la programmazione distribuita di un algoritmo "Flooding", in cui viaggiano messaggi da un Iniziatore (Agente) all'insegna di vicini collegati direzionalmente su un grafo, finchè tutta la rete non è informata. A un nodo (\textit{Processo isolato generato da una Fork()}) e alle comunicazioni sui suoi archi fisici (\textit{Le FIFO in /tmp/}) dovranno asserragliarsi le funzioni \texttt{msg()} ed \texttt{stf()}.
+
+\section{Stato dell'Arte}
+A livello concettuale, le IPC Pipelines vengono comunemente introdotte da Ritchie. 
+\begin{itemize}
+    \item \textbf{Anonymous vs Named Pipes}: A differenza di `pipe(fd)`, i `mkfifo()` esistono nel Filesystem Linux e possono essere ispezionati ed aperti dai binari isolatamente solo per nome.
+    \item \textbf{Modello a Nodi / Agenti}: Isolare la computazione usando `fork()` è imperativo in un lab sui grafi, poiché la memoria separata previene trucchi di lettura "illegale" (come array globali condivisi ai thread). L'unico modo in cui il Nodo 2 può sapere cosa ha pensato il Nodo 0 è aspettare sulla propria Pipeline.
+    \item \textbf{Costrutti Formali}: L'algoritmo di Santoro identifica il Message Generator ed il valutatore interno (State Transition Function, \texttt{stf}).
+\end{itemize}
+
+\section{Metodologia ed Implementazione}
+
+\subsection{Topologia ed Avvio}
+Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **Grafo a Diamante di 4 Nodi**: L'Agent 0 (Iniziatore) è connesso asimmetricamente ad {1, 2}. Gli Agent 1 e 2 si rivolgono entrambi al nodo di base {3}.
+
+Dal parent \texttt{main()} del C, il master lancia ciclicamente la chiamata di Sistema \texttt{mkfifo("/tmp/fifo\_src\_dst", 0666)} generando i tubi direzionali:
+\begin{ccode}[Creazione Dinamica]
+for(int i = 0; i < MAX_AGENTS; i++) {
+    for(int j = 0; j < num_neighbors[i]; j++) {
+        char fname[64];
+        sprintf(fname, "/tmp/fifo_%d_%d", i, neighbors[i][j]);
+        mkfifo(fname, 0666);
+    }
+}
+\end{ccode}
+Dopo \texttt{fork()} parallela, ogni figlio agisce come Agente e non può più parlare con il fratello se non usando la pipeline.
+
+\subsection{stf() e Multiplexing}
+Le FIFO in ambiente Linux subiscono la natura \textit{Bloccante} della Syscall \texttt{open(... , O\_RDONLY)}. Quando si chiamano multipli Open, se il vicino non avvia la controparte Write il Processo freezza. È stata utilizzata la bandiera \texttt{O\_RDWR} (che Linux autorizza per risolvere i deadlock di bootstrap) per poi gettare i rispettivi FD dentro un \texttt{fd\_set} processato da \texttt{select()}.
+
+\begin{ccode}[State Transition Function]
+void stf(int id, int* state, int sender, const char* info) {
+    if (*state == 0) { // PASSIVE TO DONE
+        *state = 1; 
+        for(int i = 0; i < num_neighbors[id]; i++) {
+            int neigh = neighbors[id][i];
+            if (neigh != sender) msg(id, neigh, info);
+        }
+    }
+}
+\end{ccode}
+
+
+\subsection{Istruzioni di Esecuzione}
+L'applicativo viene gestito interamente tramite Makefile:
+\begin{terminal}[Build & Run]
+$ make
+$ ./programma
+\end{terminal}
+
+\section{Risultati}
+Avviando la Routine, la stampa al terminale esalta coerentemente la logica asincrona dei 4 nodi isolati e del Flooding, in cui i Nodi 2 e 3 alla fine scartano i messaggi ritardatari pervenuto dell'altro braccio.
+
+\begin{terminal}[Simulazione Algoritmo di Flooding]
+massimo@PORTATILE-Linux:~/Scrivania/LabReSid24-25/hands-on/ho15$ ./flooding
+--- Avvio Algoritmo di Flooding Centralizzato ---
+Topologia: 4 Nodi a Diamante (0 Initiator)
+
+=> [AGENTE 0] INIZIATORE: Genero il messaggio di Flooding iniziale.
+    -> [AGENTE 0] Propaga messaggio al Nodo 1
+    -> [AGENTE 0] Propaga messaggio al Nodo 2
+[AGENTE 1] RICEZIONE da Nodo 0: 'ALLERTA_METEO'. TRASIZIONE a DONE e Propagazione.
+    -> [AGENTE 1] Propaga messaggio al Nodo 3
+[AGENTE 2] RICEZIONE da Nodo 0: 'ALLERTA_METEO'. TRASIZIONE a DONE e Propagazione.
+    -> [AGENTE 2] Propaga messaggio al Nodo 3
+[AGENTE 3] RICEZIONE da Nodo 1: 'ALLERTA_METEO'. TRASIZIONE a DONE e Propagazione.
+    -> [AGENTE 3] Propaga messaggio al Nodo 2
+[AGENTE 2] SCARTO msg da Nodo 3 (Gia' elaborato).
+[AGENTE 3] SCARTO msg da Nodo 2 (Gia' elaborato).
+[AGENTE 2] Spegnimento.
+[AGENTE 1] Spegnimento.
+[AGENTE 3] Spegnimento.
+[AGENTE 0] Spegnimento.
+\end{terminal}
+
+A fine esecuzione, il master rimuove ordinatamente dalle cartelle UNIX \texttt{/tmp/} la sequela di FIFO in disuso per mantenere il Filesystem esente da clutters.
+
+\section{Conclusioni e Sviluppi Futuri}
+L'algoritmo riproduce con precisione estrema un albero decisionale DFS-like senza attese esterne se non quelle bloccanti native delle pipe POSIX.
+
+\noindent \textbf{Sviluppi futuri ideali:}
+\begin{itemize}
+    \item \textbf{Polimorfismo}: Leggere tramite argomento iniziale il layout di un Grafo qualsiasi esportato dal Software NodeRED o passati via struct JSON per dinamicizzare l'orchestratore, anziché codificare la topologia esplicitamente nel C.
+    \item \textbf{Messaggistica Bidirezionale pura}: Usare protocolli a coda per stabilire il Teardown anziché usare un \textit{Timeout empirico} (Il nodo termina dopo N cicli morti dalla \texttt{select}). Si eviterebbero cicli clock rubati a vuoto dallo scheduler OS.
+\end{itemize}
+
+\end{document}

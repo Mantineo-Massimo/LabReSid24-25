@@ -13,8 +13,8 @@ run:
 
 report:
 	mkdir -p LaTex
-	# Assuming Relazione_HO18.tex will be created
-	# pdflatex -output-directory=LaTex LaTex/Relazione_HO18.tex
+	# Assuming Report_HO18.tex will be created
+	# pdflatex -output-directory=LaTex LaTex/Report_HO18.tex
 
 clean:
 	rm -rf $(VENV)

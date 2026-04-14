@@ -1,132 +1,138 @@
-\documentclass{beamer}
-
-\usetheme{Madrid}
-\usecolortheme{default}
-
+\documentclass[10pt]{beamer}
+\usetheme{metropolis}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
 \usepackage{graphicx}
-\graphicspath{{../../assets/}}
 \usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{xcolor}
 
-\title[MidTerm (HO14)]{Sistema Bancario TCP Multithread}
-\subtitle{Hands-On 14 - MidTerm}
-\author{Massimo Mantineo (541924)}
-\institute[Unime]{Università degli Studi di Messina}
+% Custom UNIME Colors (Blue and Orange/Yellow)
+\definecolor{unimeblue}{RGB}{0, 51, 102}
+\definecolor{unimeorange}{RGB}{255, 153, 51}
+
+\setbeamercolor{palette primary}{bg=unimeblue, fg=white}
+\setbeamercolor{title separator}{fg=unimeorange}
+\setbeamercolor{progress bar}{fg=unimeorange}
+
+\title{Sistemi Distribuiti: MidTerm Project}
+\subtitle{Implementazione di un Sistema Bancario Multi-Client}
 \date{A.A. 2024/2025}
+\author{Massimo Mantineo}
+\institute{Università degli Studi di Messina\\Dipartimento MIFT}
+\titlegraphic{\hfill\includegraphics[height=1cm]{../../assets/logo_unime_orizontale.png}}
 
 \begin{document}
 
-\begin{frame}
-  \titlepage
-\end{frame}
+\maketitle
 
 \begin{frame}{Indice}
-  \tableofcontents
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
 \end{frame}
 
-\section{Introduzione al problema}
-\begin{frame}{Introduzione al problema}
-  \textbf{Obiettivo del MidTerm}
-  \vspace{0.5cm}
-  
-  Sviluppare un sistema client-server bancario per un singolo correntista.
+\section{Problem Statement}
+\begin{frame}{Il Problema: Concorrenza nel Settore Bancario}
   \begin{itemize}
-      \item \textbf{Protocollo}: TCP (garanzia di consegna e ordine).
-      \item \textbf{Accessi Concorrenti}: E-banking, App, Terminale, ecc.
-      \item \textbf{Limiti Strutturali}: Massimo 10 connessioni threads globali simultanee elaborabili per volta per non sovraccaricare il server.
-      \item \textbf{Operazioni Supportate}: CRUD su memoria volatile (ADD, DELETE, UPDATE, LIST).
+    \item \textbf{Obiettivo}: Sviluppare un server bancario TCP affidabile in C.
+    \item \textbf{Sfida}: Gestire accessi contemporanei da molteplici sorgenti (App, Web, Terminale).
+    \item \textbf{Requisiti}:
+      \begin{itemize}
+        \item Consistenza dei dati (No doppie transazioni).
+        \item Alta disponibilità (Gestione multithread).
+        \item Integrità dell'estratto conto.
+      \end{itemize}
   \end{itemize}
 \end{frame}
 
-\section{Stato dell'arte}
-\begin{frame}{Stato dell'arte}
-  \textbf{Le Componenti del Networking}
-  \vspace{0.3cm}
-  
+\section{Stato dell'Arte}
+\begin{frame}{Tecnologie Core}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Socket TCP/IP}
+      \begin{itemize}
+        \item Comunicazione affidabile.
+        \item Byte-stream interaction.
+        \item Garanzia di ordinamento.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{POSIX Threads}
+      \begin{itemize}
+        \item Parallelismo reale.
+        \item Shared-memory model.
+        \item Sincronizzazione tramite Mutex.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Metodologia}
+\begin{frame}{Architettura del Sistema}
+    \centering
+    \begin{tikzpicture}[
+        scale=0.7, transform shape,
+        node distance=0.8cm,
+        client/.style={rectangle, draw=unimeblue, fill=unimeblue!10, thick, minimum width=2.5cm, minimum height=0.6cm, font=\small},
+        server/.style={rectangle, draw=red!70, fill=red!5, thick, minimum width=3.5cm, minimum height=1.2cm, align=center, font=\bfseries},
+        db/.style={cylinder, draw=unimeorange, fill=unimeorange!10, thick, shape border rotate=90, minimum width=1.5cm, minimum height=1.5cm, font=\small},
+        arrow/.style={-Stealth, thick, gray!80}
+    ]
+        % Clients
+        \node[client] (c1) {Terminale};
+        \node[client, below=0.2cm of c1] (c2) {App Mobile};
+        \node[client, below=0.2cm of c2] (c3) {Web Banking};
+
+        % Server
+        \node[server, right=2cm of c2] (serv) {BANCOMAT SERVER\\(Worker Threads)};
+
+        % Database
+        \node[db, right=2cm of serv] (database) {Shared\\DB};
+
+        % Connections
+        \draw[arrow] (c1.east) -- (serv.north west);
+        \draw[arrow] (c2.east) -- (serv.west);
+        \draw[arrow] (c3.east) -- (serv.south west);
+        
+        \draw[arrow, <->, unimeorange, very thick] (serv) -- node[above, font=\tiny, color=black] {Mutex Lock} (database);
+    \end{tikzpicture}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Main Thread}: Accetta connessioni (Dispatcher).
+        \item \textbf{Worker Threads}: Gestiscono le transazioni (CRUD).
+        \item \textbf{Sincronizzazione}: Mutex per la protezione del saldo.
+    \end{itemize}
+\end{frame}
+
+\section{Risultati}
+\begin{frame}[fragile]{Validazione: Operazioni Concorrenti}
+  \begin{tcolorbox}[colback=black!85,colframe=black!70,colupper=green!80,title=Transazione Atomica,fonttitle=\bfseries]
+    \small
+    \texttt{[Worker 3] Richiesta prelievo: 50\euro{}}\\
+    \texttt{[Worker 3] Lock acquisito sul database.}\\
+    \texttt{[Worker 3] Saldo precedente: 200\euro{} -> Nuovo: 150\euro{}}\\
+    \texttt{[Worker 3] Transazione completata. Lock rilasciato.}
+  \end{tcolorbox}
   \begin{itemize}
-      \item \textbf{TCP Sockets}: Modello di elaborazione che richiede \texttt{bind}, \texttt{listen} ed \texttt{accept}.
-      \item \textbf{Paradigma Demultiplexer}: Il socket server master ha il solo scopo di instradare. Rilascia per ogni richiesta un nuovo file descriptor virtuale allocato specificatamente per il worker.
-      \item \textbf{Race Conditions e Thread Safety}: I threads condividono il medesimo spazio di memoria dell'eseguibile master. Leggere e modificare simultaneamente la base di dati genererà inevitabilmente corruzioni in memoria. 
+    \item Test di stress con 5 client simultanei riuscito.
+    \item Nessun errore di inconsisenza rilevato (\textit{Race-free execution}).
   \end{itemize}
 \end{frame}
 
-\section{Metodologia usata}
-\begin{frame}{Metodologia e Implementazione - 1}
-  \textbf{Strutturazione Backend C}
-  
-  \vspace{0.3cm}
+\section{Conclusioni}
+\begin{frame}{Sviluppi Futuri}
   \begin{itemize}
-      \item Un array esteso \texttt{Transaction db[MAX\_RECORDS]} opera da surrogato al database relazionale.
-      \item Si utilizza un semaforo contatore (\texttt{sem\_t limiter}) posizionato a limite 10. Viene chiamata la \texttt{wait()} prima della \texttt{accept()} per interdire nuovi allocamenti ad array già pieno.
-      \item In fase di chiusura socket del client nel demone (\texttt{QUIT}), la chiamata a \texttt{post()} ripulisce il posto.
+    \item \textbf{Persistenza}: Integrazione con SQLite o database SQL esterni.
+    \item \textbf{Sicurezza}: Implementazione di layer SSL/TLS tramite OpenSSL.
+    \item \textbf{Interfaccia}: Sviluppo di un front-end React per la gestione web.
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Metodologia e Implementazione - 2}
-  \textbf{L'imperativo della Mutua Esclusione}
-  
-  \vspace{0.3cm}
-  L'assoluta stabilità dei dati è garantita dal \textit{Mutex}:
-  \begin{itemize}
-      \item Quando stringiamo i comandi testuali tramite \texttt{sscanf}, filtriamo l'input.
-      \item Prima di scorrere il database (\texttt{for loop}), \textbf{acquisiamo il lock}.
-      \item In base al target (\textit{Aggiunta, Rimozione o Modifica per ID}), salviamo il match, verifichiamo la clausola \textit{Active = 1 o 0} della struct.
-      \item \textbf{Rilasciamo il lock} solo a manipolazione della memoria conclusa, o durante un ritorno di Errore.
-  \end{itemize}
-\end{frame}
-
-\section{Risultati sperimentali}
-\begin{frame}[fragile]{Risultati sperimentali}
-  Testato con successo su terminale locale \texttt{127.0.0.1}.
-  \vspace{0.3cm}
-  
-\begin{verbatim}
---- Connected to Bank Server ---
-BANK> ADD 101 25.50 Ricarica Prepagata
-OK: ADDED 101
-BANK> LIST
---- TRANSACTION LIST ---
-[101] 25.50 - Ricarica Prepagata
-------------------------
-\end{verbatim}
-
-  Dimostrata anche la stabilità su accessi paralleli inviando in stallo il lock per emulazione. Nessun crash verificato.
-\end{frame}
-
-\begin{frame}{Analisi del Traffico (Wireshark)}
-  \textbf{3-Way Handshake TCP}
-  \vspace{0.2cm}
-
-  \begin{figure}[H]
-      \centering
-      \includegraphics[width=0.9\textwidth]{ho14/image.png}
-  \end{figure}
-
-  \begin{itemize}
-      \item Instaurazione canale tramite \texttt{[SYN]}, \texttt{[SYN, ACK]}, \texttt{[ACK]}.
-      \item Trasferimento payload operativo segnalato via \texttt{[PSH, ACK]}.
-      \item Teardown elegante a fine lavoro tramite flag \texttt{[FIN, ACK]}.
-  \end{itemize}
-\end{frame}
-
-\section{Conclusione e sviluppi futuri}
-\begin{frame}{Conclusione e sviluppi futuri}
-  \textbf{Conclusioni:}
-  Il codice sviluppato implementa un \textit{Proof of Concept} robusto ed espandibile senza l'overhead di strutture applicative gravose.
-
-  \vspace{0.5cm}
-  \textbf{Prospettive di Sviluppo Futuro:}
-  \begin{itemize}
-      \item \textbf{Database Reale}: Sostituzione dell'array RAM con \texttt{SQLite/MariaDB} richiamati via Drivers C SQL per garantire persistenza (\textit{Durability}).
-      \item \textbf{Thread Pool}: Abbandono dei \textit{Detached Threads} grezzi a favore di un pool pre-allocato di 10 worker, che estraggono i file-descriptor tramite coda (pattern Produttore-Consumatore appreso in HO12).
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
+  \vspace{0.8cm}
   \centering
-  \Huge \textbf{Grazie per l'attenzione!}
+  \Large \textbf{Grazie per l'attenzione!}\\
+  \vspace{0.5cm}
+  \small Massimo Mantineo - 541924
 \end{frame}
 
 \end{document}

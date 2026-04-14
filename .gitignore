@@ -14,7 +14,6 @@ data/
 *.csv
 *.txt
 !lotr.txt
-!Relazione_*.txt
 
 # Build Artifacts
 *.o

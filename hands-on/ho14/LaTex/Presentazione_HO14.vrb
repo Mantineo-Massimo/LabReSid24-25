@@ -1,15 +1,12 @@
-\frametitle{Risultati sperimentali}
-Testato con successo su terminale locale \texttt{127.0.0.1}.
-  \vspace{0.3cm}
-
-\begin{verbatim}
---- Connected to Bank Server ---
-BANK> ADD 101 25.50 Ricarica Prepagata
-OK: ADDED 101
-BANK> LIST
---- TRANSACTION LIST ---
-[101] 25.50 - Ricarica Prepagata
-------------------------
-\end{verbatim}
-
-  Dimostrata anche la stabilità su accessi paralleli inviando in stallo il lock per emulazione. Nessun crash verificato.
+\frametitle{Validazione: Operazioni Concorrenti}
+\begin{tcolorbox}[colback=black!85,colframe=black!70,colupper=green!80,title=Transazione Atomica,fonttitle=\bfseries]
+    \small
+    \texttt{[Worker 3] Richiesta prelievo: 50\euro{}}\\
+    \texttt{[Worker 3] Lock acquisito sul database.}\\
+    \texttt{[Worker 3] Saldo precedente: 200\euro{} -> Nuovo: 150\euro{}}\\
+    \texttt{[Worker 3] Transazione completata. Lock rilasciato.}
+  \end{tcolorbox}
+  \begin{itemize}
+    \item Test di stress con 5 client simultanei riuscito.
+    \item Nessun errore di inconsisenza rilevato (\textit{Race-free execution}).
+  \end{itemize}

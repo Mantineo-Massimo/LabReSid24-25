@@ -1,0 +1,231 @@
+\documentclass[a4paper,12pt]{article}
+\setlength{\headheight}{68.803pt}
+\addtolength{\topmargin}{-56.803pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  frame=single,
+  fontsize=\small
+}
+
+\usepackage[
+  left=1in,
+  right=1in,
+  top=3cm,
+  bottom=1in
+]{geometry}
+
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    pdfborder={0 0 0},
+    pdfauthor={Massimo Mantineo},
+    pdftitle={Multithreading e Thread Affinity},
+    pdfsubject={Laboratorio di Reti e Sistemi Distribuiti: HANDS-ON 8},
+]{hyperref}
+
+\usepackage{graphicx}
+\graphicspath{{../../assets/}}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.symbols}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage[skins, listings]{tcolorbox}
+\usepackage{float}
+
+\newtcblisting{terminal}[1][]{
+    listing only,
+    colback=black!85!white,
+    colframe=black!70!white,
+    colupper=green!80!white,
+    coltitle=white,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        language={},
+        basicstyle=\ttfamily\small\color{green!80!white},
+        backgroundcolor={},
+        frame=none,
+        breaklines=true,
+        showstringspaces=false,
+        numbers=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\newtcblisting{ccode}[1][]{
+    listing only,
+    colback=blue!3!white,
+    colframe=blue!70!black,
+    title=#1,
+    fonttitle=\bfseries\sffamily,
+    listing options={
+        style=cstyle,
+        backgroundcolor={},
+        frame=none
+    },
+    enhanced,
+    drop shadow,
+    arc=3mm
+}
+
+\setlength{\footskip}{50pt}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{%
+  \parbox[b]{0.45\textwidth}{%
+    \small
+    Student Name: Massimo Mantineo\\
+    Student ID: 541924
+    \vspace{20pt}
+  }%
+}
+\fancyhead[C]{%
+  \parbox[b]{0.2\textwidth}{%
+    \centering
+    \normalsize \bfseries
+    LabReSiD25\\
+    Hands-On 8
+    \vspace{20pt}
+  }%
+}
+\fancyhead[R]{%
+  \parbox[b]{0.35\textwidth}{%
+    \flushright
+    \includegraphics[width=3.5cm]{\detokenize{logo_unime_orizontale.png}}
+    \vspace{15pt}
+  }%
+}
+
+\renewcommand{\contentsname}{Indice}
+
+\title{\vspace{-2cm}Report: Multithreading e Thread Affinity\\
+\large (Hands-On 8)}
+\author{Massimo Mantineo \\ Matricola: 541924}
+\date{MESSINA, A.A. 2024/2025}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=6cm]{\detokenize{logo_unime_orizontale.png}}\par\vspace{1cm}
+    \vspace{2cm}
+    {\Large \textbf{Università degli Studi di Messina}\par}
+    {\large Dipartimento MIFT - Corso di Laurea Triennale in Informatica (L-31)\par}
+    \vspace*{1cm}
+    {\large Laboratorio di Reti e Sistemi Distribuiti\par}
+    \vspace{1cm}
+    {\Large \textbf{HANDS-ON 8:}\\
+    Multithreading e Thread Affinity\par}
+    \vspace{2cm}
+    {\large Massimo Mantineo \par}
+    {\large Matricola: 541924 \par}
+    \vfill
+    {\large Messina, A.A. 2024/2025 \par}
+\end{titlepage}
+
+\clearpage
+\pagestyle{fancy}
+\tableofcontents
+\newpage
+
+\section{Problem Statement}
+L'ottava esercitazione (HO8) affronta il tema del calcolo parallelo e dell'ottimizzazione del carico di lavoro su architetture multi-core. L'obiettivo consiste nella ricerca dei numeri primi in un intervallo esteso ($1 - 1.000.000$) tramite l'impiego della libreria \textbf{Pthreads}. La sfida tecnica non risiede solo nella parallelizzazione algoritmica, ma nell'esplorazione della \textbf{Thread Affinity}, una tecnica avanzata che permette di vincolare i flussi di esecuzione a specifici core fisici per massimizzare il riuso della cache e minimizzare l'overhead dello scheduler di sistema.
+
+\section{Stato dell'Arte}
+L'efficienza del multithreading moderno dipende strettamente dall'interazione tra lo scheduler del sistema operativo e la topologia hardware.
+\begin{itemize}
+    \item \textbf{SMT e Hyper-Threading}: Molti processori moderni presentano core logici che condividono le unità di esecuzione fisiche. Senza affinità, lo scheduler potrebbe posizionare due thread pesanti sullo stesso core fisico, dimezzando le prestazioni.
+    \item \textbf{Gerarchia delle Cache e NUMA}: L'affinità hardware (\textit{Hard Affinity}) è cruciale per mantenere i dati nelle cache L1/L2 locali al core, evitando costosi accessi alla memoria principale (\texttt{RAM}) causati dalla migrazione dei thread tra core distanti.
+    \item \textbf{Bitmasking (\texttt{cpu_set_t})}: Sotto Linux, l'affinità viene gestita tramite maschere di bit che rappresentano la mappa logica delle CPU. Le macro POSIX permettono una manipolazione granulare di questi set.
+\end{itemize}
+
+\section{Metodologia ed Implementazione}
+L'implementazione prevede la suddivisione dell'intervallo di ricerca e l'assegnazione deterministica dei core.
+
+\subsection{Parallelizzazione Alternata}
+Il carico viene distribuito equamente tramite una struttura \texttt{thread_data_t}, garantendo che ogni thread processi un sotto-intervallo unico (\textit{Static Partitioning}).
+\begin{ccode}[Snippet Gestione Affinity]
+cpu_set_t cpuset;
+CPU_ZERO(&cpuset);
+CPU_SET(data->id % num_cores, &cpuset); // Binding deterministico
+pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+\end{ccode}
+
+\subsection{Algoritmo di Verifica}
+Viene utilizzato un algoritmo di test di primalità ottimizzato (fino alla radice quadrata di $N$) per ridurre la complessità computazionale di ogni singolo thread.
+
+
+\subsection{Istruzioni di Esecuzione}
+Compilazione con supporto ai thread (pthread):
+\begin{terminal}[Build]
+$ gcc prime_affinity.c -o affinity -pthread
+\end{terminal}
+
+\section{Risultati}
+La validazione è stata condotta monitorando la distribuzione del carico in tempo reale.
+
+\subsection{Validazione dell'Affinità (PSR)}
+Tramite il comando \texttt{ps -eLo pid,tid,psr}, è stato verificato che il thread principale e i thread worker occupassero core distinti senza fluttuazioni.
+\begin{terminal}[Monitoraggio PSR]
+  PID   TID PSR CMD
+20164 20165   0 ./prime_affinity (Thread 0)
+20164 20166   1 ./prime_affinity (Thread 1)
+\end{terminal}
+
+\subsection{Vantaggi Prestazionali}
+I test hanno confermato che forzare l'affinità riduce la varianza dei tempi di esecuzione (\textit{jitter}), rendendo il sistema più prevedibile per carichi di calcolo intensivo.
+
+\section{Conclusioni e Sviluppi Futuri}
+L'Hands-On 8 ha evidenziato come la vicinanza tra software e hardware sia determinante per le prestazioni. Il controllo dell'affinità trasforma lo scheduler da una "black box" a uno strumento deterministico.
+
+\noindent \textbf{Sviluppi futuri:}
+\begin{itemize}
+    \item \textbf{Work-Stealing}: Implementazione di uno scheduler dinamico che ripartisce il carico se un thread completa il proprio intervallo più velocemente degli altri.
+    \item \textbf{OpenMP}: Migrazione verso direttive di alto livello come OpenMP per gestire la parallelizzazione e l'affinità in modo dichiarativo e portabile.
+\end{itemize}
+mputing}).
+
+\end{document}

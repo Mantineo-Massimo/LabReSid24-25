@@ -13,7 +13,7 @@ run:
 
 report:
 	mkdir -p LaTex
-	# Compilation of Relazione_HO19.tex will be done after its creation
+	# Compilation of Report_HO19.tex will be done after its creation
 
 clean:
 	rm -rf $(VENV)
