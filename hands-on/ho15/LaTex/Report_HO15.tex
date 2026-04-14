@@ -202,10 +202,10 @@ Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **
         \node[agent, below=3.5cm of a0] (a3) {Agente 3};
 
         % Edges (FIFOs)
-        \draw[arrow] (a0) -- node[above left, font=\tiny, color=black] {/tmp/fifo\_0\_1} (a1);
-        \draw[arrow] (a0) -- node[above right, font=\tiny, color=black] {/tmp/fifo\_0\_2} (a2);
-        \draw[arrow] (a1) -- node[below left, font=\tiny, color=black] {/tmp/fifo\_1\_3} (a3);
-        \draw[arrow] (a2) -- node[below right, font=\tiny, color=black] {/tmp/fifo\_2\_3} (a3);
+        \draw[arrow] (a0) -- node[above left, font=\tiny, color=black] {/tmp/fifo_0_1} (a1);
+        \draw[arrow] (a0) -- node[above right, font=\tiny, color=black] {/tmp/fifo_0_2} (a2);
+        \draw[arrow] (a1) -- node[below left, font=\tiny, color=black] {/tmp/fifo_1_3} (a3);
+        \draw[arrow] (a2) -- node[below right, font=\tiny, color=black] {/tmp/fifo_2_3} (a3);
         
         % Annotations
         \node[fifo, right=0.5cm of a2, align=center] {Inter-Process\\Communication\\via Named Pipes};

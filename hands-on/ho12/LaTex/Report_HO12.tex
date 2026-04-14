@@ -214,19 +214,19 @@ L'architettura del sistema si basa sulla coordinazione di tre semafori per gesti
         % Semaphores
         \node[draw=red!70, fill=red!5, dashed, above=0.5cm of buf, align=center, font=\tiny\itshape] (sem) {
             \textbf{Semafori di Sincronizzazione:}\\
-            empty\_slots (N)\\
-            filled\_slots (0)\\
+            empty_slots (N)\\
+            filled_slots (0)\\
             mutex (1)
         };
 
         % Interactions
-        \draw[arrow] (prod) -- node[above, font=\tiny] {put\_item()} (buf);
-        \draw[arrow] (buf) -- node[above, font=\tiny] {get\_item()} (cons);
+        \draw[arrow] (prod) -- node[above, font=\tiny] {put_item()} (buf);
+        \draw[arrow] (buf) -- node[above, font=\tiny] {get_item()} (cons);
         \draw[arrow, <->, red!70] (sem) -- (buf);
 
         % Labels
-        \node[below=0.1cm of prod, font=\tiny] {sem\_wait(empty\_slots)};
-        \node[below=0.1cm of cons, font=\tiny] {sem\_wait(filled\_slots)};
+        \node[below=0.1cm of prod, font=\tiny] {sem_wait(empty_slots)};
+        \node[below=0.1cm of cons, font=\tiny] {sem_wait(filled_slots)};
     \end{tikzpicture}
     \caption{Workflow del pattern Produttore-Consumatore con buffer limitato coordinato da semafori.}
     \label{fig:prod\_cons}

@@ -210,17 +210,17 @@ L'implementazione sfrutta le tre primitive cardine dell'API epoll per gestire il
         \node[fd] (fd1) at (-2.5,0.5) {fd 3};
         \node[fd] (fd2) at (-1.5,-0.5) {fd 5};
         \node[fd] (fd3) at (-0.5,0.5) {fd 6};
-        \node[fd, fill=yellow!30] (fd\_act) at (1.5,0) {fd 8};
-        \node[right=0.1cm of fd\_act, font=\tiny, color=red] {EVENT!};
+        \node[fd, fill=yellow!30] (fd_act) at (1.5,0) {fd 8};
+        \node[right=0.1cm of fd_act, font=\tiny, color=red] {EVENT!};
         
         \node[below=1cm of fd2, font=\itshape\small] {Interest List (RB-Tree)};
 
         % Ready List
         \node[rectangle, draw=green!70, fill=green!5, thick, minimum width=4cm, minimum height=1cm] (ready) at (1.5,-2.5) {Ready List};
-        \draw[arrows={-Stealth}, thick, red] (fd\_act) -- (ready);
+        \draw[arrows={-Stealth}, thick, red] (fd_act) -- (ready);
 
         % User Space
-        \node[box, below=1.5cm of ready] (user) {epoll\_wait()};
+        \node[box, below=1.5cm of ready] (user) {epoll_wait()};
         \draw[arrows={Double-Stealth}, thick, green!50!black] (ready) -- node[right, font=\tiny] {O(k) Return} (user);
         
         \node[below=0.1cm of user, font=\bfseries\sffamily] {USER SPACE};

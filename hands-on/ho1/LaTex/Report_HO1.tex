@@ -197,30 +197,30 @@ La soluzione è stata articolata in due coppie di programmi C (Client/Server) ch
         arrow/.style={-Stealth, thick, blue!70}
     ]
         % Server Sides
-        \node[box] (s\_sock) {socket()};
-        \node[box, below=0.8cm of s\_sock] (s\_bind) {bind()};
-        \node[box, below=0.8cm of s\_bind] (s\_list) {listen()};
-        \node[box, below=0.8cm of s\_list] (s\_acc) {accept()};
-        \node[box, below=1.5cm of s\_acc] (s\_rw) {read/write};
+        \node[box] (s_sock) {socket()};
+        \node[box, below=0.8cm of s_sock] (s_bind) {bind()};
+        \node[box, below=0.8cm of s_bind] (s_list) {listen()};
+        \node[box, below=0.8cm of s_list] (s_acc) {accept()};
+        \node[box, below=1.5cm of s_acc] (s_rw) {read/write};
 
         % Client Sides
-        \node[box, right=4cm of s\_sock] (c\_sock) {socket()};
-        \node[box, below=2.5cm of c\_sock] (c\_conn) {connect()};
-        \node[box, below=1.5cm of c\_conn] (c\_rw) {write/read};
+        \node[box, right=4cm of s_sock] (c_sock) {socket()};
+        \node[box, below=2.5cm of c_sock] (c_conn) {connect()};
+        \node[box, below=1.5cm of c_conn] (c_rw) {write/read};
 
         % Connections
-        \draw[arrow] (s\_sock) -- (s\_bind);
-        \draw[arrow] (s\_bind) -- (s\_list);
-        \draw[arrow] (s\_list) -- (s\_acc);
-        \draw[arrow] (c\_sock) -- (c\_conn);
-        \draw[arrow, dashed] (c\_conn) -- node[above, font=\tiny, color=black] {TCP Handshake} (s\_acc);
-        \draw[arrow] (s\_acc) -- (s\_rw);
-        \draw[arrow] (c\_conn) -- (c\_rw);
-        \draw[arrow, <->, color=orange!80!black] (s\_rw) -- node[above, font=\tiny] {Data Exchange} (c\_rw);
+        \draw[arrow] (s_sock) -- (s_bind);
+        \draw[arrow] (s_bind) -- (s_list);
+        \draw[arrow] (s_list) -- (s_acc);
+        \draw[arrow] (c_sock) -- (c_conn);
+        \draw[arrow, dashed] (c_conn) -- node[above, font=\tiny, color=black] {TCP Handshake} (s_acc);
+        \draw[arrow] (s_acc) -- (s_rw);
+        \draw[arrow] (c_conn) -- (c_rw);
+        \draw[arrow, <->, color=orange!80!black] (s_rw) -- node[above, font=\tiny] {Data Exchange} (c_rw);
 
         % Labels
-        \node[above=0.2cm of s\_sock, font=\bfseries] {SERVER (TCP)};
-        \node[above=0.2cm of c\_sock, font=\bfseries] {CLIENT (TCP)};
+        \node[above=0.2cm of s_sock, font=\bfseries] {SERVER (TCP)};
+        \node[above=0.2cm of c_sock, font=\bfseries] {CLIENT (TCP)};
     \end{tikzpicture}
     \caption{Workflow di interazione tra Client e Server tramite Socket API.}
     \label{fig:socket\_workflow}

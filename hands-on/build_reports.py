@@ -20,6 +20,14 @@ for i in range(1, 20):
             print(f"Compiling {new_tex}...")
             # Use batchmode to prevent stuck prompts, and increased timeout
             try:
+                # Clean up auxiliary files first to ensure fresh Index generation
+                subprocess.run(
+                    ["latexmk", "-C"],
+                    cwd=tex_dir,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                
                 subprocess.run(
                     ["latexmk", "-pdf", "-interaction=batchmode", f"Report_HO{i}.tex"],
                     cwd=tex_dir,
