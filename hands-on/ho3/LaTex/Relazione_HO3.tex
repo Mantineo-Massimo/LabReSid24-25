@@ -211,6 +211,13 @@ Dopo che la \texttt{select()} ritorna, il server distingue due rami logici:
 \section{Risultati}
 La validazione è stata effettuata tramite uno script bash che lancia 5 client in background, verificando la corretta ricezione degli ACK sincronizzati.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{ho3/ho3_wireshark_multiplexing.png}
+    \caption{Gestione asincrona del Multiplexing su Wireshark.}
+    \label{fig:ho3_multiplexing}
+\end{figure}
+
 \subsection{Analisi Wireshark}
 L'ispezione dei pacchetti (Figura~\ref{fig:ho3_multiplexing}) mostra come il server gestisca gli handshake e gli scambi dati in modo asincrono. Nonostante le richieste arrivino in un lasso di tempo di millisecondi, il server risponde a ciascun client (porte sorgente 34848, 34850, ecc.) senza che l'elaborazione di uno blocchi l'altro.
 

@@ -213,6 +213,13 @@ Questa architettura permette di mantenere stati di validazione indipendenti per 
 \section{Risultati}
 La validazione è stata condotta simulando accessi concorrenti e ispezionando l'interlacciamento dei pacchetti.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{ho2/ho2_wireshark_nonblocking.png}
+    \caption{Monitoraggio socket non-bloccanti su Wireshark.}
+    \label{fig:wireshark_nonblocking}
+\end{figure}
+
 \subsection{Validazione Funzionale}
 Entrambi i server riconoscono correttamente la sequenza di Fibonacci. Tuttavia, i log evidenziano la differenza nel determinismo temporale:
 \begin{terminal}[Log Multiplexing]
