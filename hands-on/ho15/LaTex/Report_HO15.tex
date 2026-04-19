@@ -187,8 +187,9 @@ Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **
     \centering
     \begin{tikzpicture}[
         node distance=2cm,
-        agent/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, font=\small\bfseries},
-        fifo/.style={rectangle, draw=orange!70, fill=orange!5, dashed, font=\tiny\ttfamily},
+        agent/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, align=center, font=\small\bfseries},
+        fifo/.style={rectangle, draw=orange!70, fill=orange!5, dashed, font=\tiny\ttfamily, align=center},
+        proc/.style={draw=blue!70, fill=blue!5, thick, circle, minimum size=1.5cm, align=center, font=\small\sffamily},
         arrow/.style={-Stealth, thick, blue!70}
     ]
         % Nodes
@@ -204,7 +205,7 @@ Trattandosi di uno scenario aperto, abbiamo optato per formalizzare un tipico **
         \draw[arrow] (a2) -- node[below right, font=\tiny, color=black] {/tmp/fifo\_2\_3} (a3);
         
         % Annotations
-        \node[fifo, right=0.5cm of a2, align=center] {Inter-Process\\Communication\\via Named Pipes};
+        \node[fifo, right=1.5cm of a2, align=center] {Inter-Process\\Communication\\via Named Pipes};
     \end{tikzpicture}
     \caption{Topologia distribuita a diamante per la simulazione dell'algoritmo di Flooding.}
     \label{fig:flooding_topology}

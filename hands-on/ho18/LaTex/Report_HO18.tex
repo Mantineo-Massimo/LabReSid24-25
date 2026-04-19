@@ -203,7 +203,7 @@ L'architettura del sistema si basa sul modello a tre stadi (Map, Shuffle, Reduce
         \node[box, right=of split, yshift=1cm] (map1) {Map Worker 1\\(Word Counts)};
         \node[box, right=of split, yshift=-1cm] (map2) {Map Worker 2\\(Word Counts)};
         
-        \node[box, right=2cm of split] (agg) {Global\\Reducer\\(ray.get)};
+        \node[box, right=5.5cm of split] (agg) {Global\\Reducer\\(ray.get)};
         \node[data, right=of agg] (output) {Final Report};
 
         % Connections

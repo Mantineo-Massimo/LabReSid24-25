@@ -191,7 +191,7 @@ Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti dispost
     \centering
     \begin{tikzpicture}[
         node distance=2.5cm,
-        agent/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, font=\small\bfseries},
+        agent/.style={circle, draw=blue!70, fill=blue!5, thick, minimum size=1.2cm, align=center, font=\small\bfseries},
         arrow/.style={-Stealth, thick, blue!70, bend left=20}
     ]
         % Nodes in a circle
@@ -209,7 +209,7 @@ Acronimo del triumvirato *LCR*, esso è il protocollo cardine nelle reti dispost
         \draw[arrow] (a4) to node[right, font=\tiny, color=black] {UID:23} (a0);
         
         % Legend
-        \node[draw=orange!70, fill=orange!5, dashed, below=3.5cm of a0, font=\tiny\itshape, align=center] {
+        \node[draw=orange!70, fill=orange!5, dashed, below=6.5cm of a0, font=\tiny\itshape, align=center] {
             \textbf{LCR Process:}\\
             1. Higher ID propagates\\
             2. Lower ID is dropped\\

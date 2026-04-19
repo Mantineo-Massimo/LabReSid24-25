@@ -194,9 +194,9 @@ Il Federated Learning si basa sul concetto di portare il calcolo dai dati, invec
         \node[aggregator] (agg) {GLOBAL AGGREGATOR\\(Global Model $W$)};
 
         % Workers
-        \node[worker, below left=2cm and 1cm of agg] (w1) {Worker 1\\(Local Data $D\_1$)};
+        \node[worker, below left=2cm and 2.5cm of agg] (w1) {Worker 1\\(Local Data $D\_1$)};
         \node[worker, below=2.5cm of agg] (w2) {Worker 2\\(Local Data $D\_2$)};
-        \node[worker, below right=2cm and 1cm of agg] (w3) {Worker 3\\(Local Data $D\_3$)};
+        \node[worker, below right=2cm and 2.5cm of agg] (w3) {Worker 3\\(Local Data $D\_3$)};
 
         % Downlink
         \draw[arrow, blue!70] (agg.south) -- node[left, font=\tiny, color=black] {Broadcast Weights} (w1.north);
