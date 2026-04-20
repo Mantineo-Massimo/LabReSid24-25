@@ -1,0 +1,19 @@
+# C compiled objects and binaries
+server_http/obj/
+server_http/bin/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.listing
+
+# OS generated files
+.DS_Store
