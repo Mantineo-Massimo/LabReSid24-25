@@ -1,0 +1,21 @@
+\frametitle{4. Thread Safety sulle Prenotazioni}
+Tutte le chiamate API che leggono o modificano la lista delle aule sono protette mediante un costrutto \textbf{Mutex} centralizzato. Questo garantisce l'isolamento transazionale ed evita corruzioni (Data Race).
+
+\begin{lstlisting}[style=cstyle]
+int rm_create(resource_manager_t* rm, const char* room, const char* student) {
+    pthread_mutex_lock(&rm->mutex); // ACQUISIZIONE LOCK
+
+    if (rm->count >= MAX_RESERVATIONS) {
+        pthread_mutex_unlock(&rm->mutex);
+        return -1;
+    }
+
+    // Inserimento sicuro dei dati nella memoria condivisa
+    strncpy(rm->reservations[rm->count].room, room, 127);
+    strncpy(rm->reservations[rm->count].student, student, 127);
+    rm->count++;
+
+    pthread_mutex_unlock(&rm->mutex); // RILASCIO LOCK
+    return rm->count - 1;
+}
+\end{lstlisting}
