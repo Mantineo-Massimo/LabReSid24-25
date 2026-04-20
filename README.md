@@ -14,12 +14,15 @@ Repository del corso di **Laboratorio di Reti e Sistemi Distribuiti** con gli Ha
 ---
 
 ## 📂 Struttura del Repository
-Il materiale è organizzato cronologicamente nella cartella `hands-on/`. Ogni cartella contiene:
-*   Il codice sorgente (`.c`, `.py`, `.sh`).
-*   Un `Makefile` per la compilazione automatica.
-*   Un report tecnico dettagliato in formato **PDF**.
+Il repository è suddiviso in due sezioni principali: le esercitazioni di laboratorio (`hands-on/`) e il progetto finale (`progetto/`).
 
-### Indice degli Hands-On
+### 🏆 Progetto Finale (Submodule)
+La cartella `progetto/` costituisce il repository del progetto finale, realizzato in collaborazione con **Pierluca Tino Castorina (Matricola: 545101)**. Si tratta di un **Server HTTP Concorrente** basato su Thread Pool. La cartella contiene codice sorgente in C, `Makefile`, documentazione e slide in LaTeX.
+[🔗 Visita il repository del Progetto Finale](https://github.com/Mantineo-Massimo/final-541924and545101)
+
+### 📚 Indice degli Hands-On (`hands-on/`)
+Ogni cartella contiene il codice sorgente, un `Makefile` per la compilazione e un report tecnico in PDF.
+
 
 | ID | Titolo / Argomento | Tecnologie Principali |
 |:---|:---|:---|
