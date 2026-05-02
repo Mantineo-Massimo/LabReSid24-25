@@ -1,3 +1,6 @@
 [submodule "progetto"]
 	path = progetto
 	url = https://github.com/Mantineo-Massimo/final-541924and545101.git
+[submodule "progetto"]
+	path = progetto
+	url = https://github.com/LabReSiD35-Unime/final-541924and545101.git
